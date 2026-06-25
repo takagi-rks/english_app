@@ -1,0 +1,301 @@
+scene,japanese,english,hint,level,pronunciation_difficulty,grammar_tags
+greeting,こんにちは。,Hello.,基本の挨拶,beginner,easy,greeting|present-simple
+greeting,おはようございます。,Good morning.,朝の挨拶,beginner,easy,greeting
+greeting,こんばんは。,Good evening.,夜の挨拶,beginner,easy,greeting
+greeting,お会いできてうれしいです。,Nice to meet you.,初対面,beginner,easy,greeting|set-phrase
+greeting,またお会いできてうれしいです。,Nice to see you again.,再会の挨拶,beginner,easy,greeting
+greeting,元気ですか？,How are you?,調子を聞く,beginner,easy,question|greeting
+greeting,元気です。ありがとう。,I am good thank you.,返答,beginner,easy,response|present-simple
+greeting,まあまあです。,I am doing okay.,自然な返答,beginner,normal,response|present-continuous
+greeting,調子はどうですか？,How is it going?,カジュアルな挨拶,beginner,normal,question|greeting
+greeting,いい感じです。,It is going well.,返答,beginner,normal,response
+greeting,今日はどうですか？,How are you today?,今日の調子,beginner,easy,question
+greeting,お久しぶりです。,Long time no see.,久しぶり,beginner,normal,set-phrase
+greeting,最近どうですか？,How have you been?,近況を聞く,intermediate,normal,present-perfect|question
+greeting,こちらこそお会いできてうれしいです。,It is nice to meet you too.,返答,beginner,normal,response
+greeting,よろしくお願いします。,I look forward to working with you.,仕事で使う,intermediate,normal,business|future
+greeting,先に失礼します。,I will head out now.,別れの挨拶,intermediate,normal,future|leaving
+greeting,良い一日を。,Have a nice day.,別れ際,beginner,easy,set-phrase
+greeting,良い週末を。,Have a great weekend.,週末前,beginner,easy,set-phrase
+greeting,また明日。,See you tomorrow.,別れ際,beginner,easy,future
+greeting,また後で。,See you later.,カジュアル,beginner,easy,set-phrase
+greeting,お先にどうぞ。,After you.,譲る表現,beginner,easy,set-phrase
+greeting,お疲れさまでした。,Thanks for your hard work.,仕事終わり,intermediate,normal,thanks
+greeting,今日は来てくれてありがとう。,Thanks for coming today.,感謝,beginner,normal,thanks|gerund
+greeting,連絡できてよかったです。,It is good to hear from you.,連絡への返答,intermediate,normal,set-phrase
+greeting,お名前を伺ってもいいですか？,May I have your name?,丁寧に聞く,beginner,normal,polite|question
+greeting,お元気そうですね。,You look well.,相手の様子,beginner,easy,present-simple
+greeting,今日は寒いですね。,It is cold today.,天気の話題,beginner,easy,weather|smalltalk
+greeting,来てくれてうれしいです。,I am glad you came.,歓迎,intermediate,normal,past-simple
+greeting,またすぐ会いましょう。,Let us meet again soon.,別れ際,intermediate,normal,suggestion
+greeting,安全に帰ってください。,Get home safely.,別れ際,beginner,normal,imperative
+self_introduction,私はタカです。,I am Taka.,名前を言う,beginner,easy,self-introduction|present-simple
+self_introduction,日本出身です。,I am from Japan.,出身,beginner,easy,self-introduction
+self_introduction,東京に住んでいます。,I live in Tokyo.,住んでいる場所,beginner,easy,present-simple
+self_introduction,英語を勉強しています。,I am studying English.,学習中,beginner,normal,present-continuous
+self_introduction,会社員です。,I work at a company.,仕事,beginner,easy,work|present-simple
+self_introduction,大学生です。,I am a university student.,身分,beginner,normal,self-introduction
+self_introduction,趣味は映画を見ることです。,My hobby is watching movies.,趣味,beginner,normal,gerund
+self_introduction,週末はよく料理をします。,I often cook on weekends.,習慣,beginner,normal,adverb-frequency
+self_introduction,旅行が好きです。,I like traveling.,好み,beginner,easy,like|gerund
+self_introduction,犬を飼っています。,I have a dog.,所有,beginner,easy,have
+self_introduction,家族は4人です。,There are four people in my family.,家族,beginner,normal,there-is
+self_introduction,兄が一人います。,I have one older brother.,家族,beginner,normal,have
+self_introduction,仕事では営業をしています。,I work in sales.,仕事,beginner,normal,work
+self_introduction,IT業界で働いています。,I work in the IT industry.,仕事,intermediate,normal,work
+self_introduction,英語はまだ勉強中です。,I am still learning English.,謙遜,beginner,normal,present-continuous
+self_introduction,少しだけ英語を話せます。,I can speak a little English.,能力,beginner,easy,can
+self_introduction,新しい人に会うのが好きです。,I like meeting new people.,好み,intermediate,normal,gerund
+self_introduction,コーヒーが大好きです。,I really love coffee.,好み,beginner,easy,like
+self_introduction,最近ランニングを始めました。,I recently started running.,近況,intermediate,normal,past-simple|gerund
+self_introduction,普段は電車で通勤しています。,I usually commute by train.,日課,intermediate,normal,adverb-frequency
+self_introduction,今日は自己紹介をします。,I will introduce myself today.,導入,beginner,normal,future
+self_introduction,私の名前はユミです。,My name is Yumi.,名前,beginner,easy,self-introduction
+self_introduction,京都で生まれました。,I was born in Kyoto.,出生,intermediate,normal,passive
+self_introduction,大阪で育ちました。,I grew up in Osaka.,育ち,intermediate,normal,past-simple
+self_introduction,今は一人暮らしです。,I live by myself now.,暮らし,beginner,normal,present-simple
+self_introduction,音楽を聴くのが好きです。,I enjoy listening to music.,趣味,beginner,normal,gerund
+self_introduction,週に二回ジムに行きます。,I go to the gym twice a week.,頻度,beginner,normal,frequency
+self_introduction,人と話すのが好きです。,I enjoy talking with people.,性格,beginner,normal,gerund
+self_introduction,英語を使う仕事がしたいです。,I want to work in English.,目標,intermediate,normal,want-to
+self_introduction,どうぞよろしくお願いします。,It is nice to meet everyone.,締め,beginner,normal,greeting
+cafe,コーヒーをください。,I would like a coffee please.,注文,beginner,normal,would-like|ordering
+cafe,アイスコーヒーをください。,I would like an iced coffee.,注文,beginner,normal,would-like
+cafe,ラテを一つお願いします。,Can I have one latte please?,注文,beginner,normal,can|ordering
+cafe,ここで飲みます。,For here please.,店内,beginner,easy,set-phrase
+cafe,持ち帰りでお願いします。,To go please.,持ち帰り,beginner,easy,set-phrase
+cafe,サイズは小でお願いします。,Small size please.,サイズ,beginner,easy,ordering
+cafe,砂糖はなしでお願いします。,No sugar please.,好み,beginner,easy,ordering
+cafe,ミルクを入れてください。,Please add milk.,依頼,beginner,easy,imperative
+cafe,おすすめは何ですか？,What do you recommend?,おすすめ,beginner,normal,question
+cafe,席は空いていますか？,Is this seat available?,席,beginner,normal,question
+cafe,Wi-Fiはありますか？,Do you have Wi-Fi?,設備,beginner,easy,question
+cafe,パスワードを教えてもらえますか？,Could you tell me the password?,依頼,intermediate,normal,could|question
+cafe,注文してもいいですか？,Can I order now?,注文,beginner,easy,can|question
+cafe,まだ決めていません。,I have not decided yet.,返答,intermediate,normal,present-perfect
+cafe,少し待ってください。,Please give me a moment.,待ってもらう,beginner,normal,request
+cafe,これも追加できますか？,Can I add this too?,追加注文,beginner,normal,can
+cafe,レシートをください。,Can I have a receipt?,会計,beginner,normal,can
+cafe,支払いはカードでできますか？,Can I pay by card?,支払い,beginner,normal,can|payment
+cafe,現金で払います。,I will pay in cash.,支払い,beginner,easy,future|payment
+cafe,ここで待てばいいですか？,Should I wait here?,待つ場所,intermediate,normal,should|question
+cafe,名前を呼ばれますか？,Will you call my name?,受け取り,intermediate,normal,future|question
+cafe,これは私の注文ですか？,Is this my order?,確認,beginner,easy,question
+cafe,注文が違うようです。,I think this is not my order.,トラブル,intermediate,normal,think
+cafe,もう一つ袋をもらえますか？,Could I have another bag?,依頼,intermediate,normal,could
+cafe,水をいただけますか？,Could I have some water?,依頼,beginner,normal,could
+cafe,テラス席はありますか？,Do you have outdoor seats?,席,beginner,normal,question
+cafe,予約は必要ですか？,Do I need a reservation?,確認,beginner,normal,question
+cafe,何時まで開いていますか？,What time are you open until?,営業時間,intermediate,normal,question
+cafe,これを温めてもらえますか？,Could you heat this up?,依頼,intermediate,normal,could
+cafe,とてもおいしかったです。,It was very good.,感想,beginner,easy,past-simple
+restaurant,2名です。,Table for two please.,入店,beginner,easy,restaurant
+restaurant,予約しています。,I have a reservation.,予約,beginner,easy,have
+restaurant,田中の名前で予約しています。,I have a reservation under Tanaka.,予約名,intermediate,normal,reservation
+restaurant,窓側の席はありますか？,Do you have a table by the window?,席希望,intermediate,normal,question
+restaurant,メニューをいただけますか？,Can I have the menu?,依頼,beginner,easy,can
+restaurant,おすすめは何ですか？,What do you recommend?,おすすめ,beginner,normal,question
+restaurant,これは辛いですか？,Is this spicy?,確認,beginner,easy,question
+restaurant,ベジタリアン向けの料理はありますか？,Do you have vegetarian dishes?,食事制限,intermediate,normal,question
+restaurant,アレルギーがあります。,I have an allergy.,注意,beginner,normal,health
+restaurant,ナッツは入っていますか？,Does this contain nuts?,確認,intermediate,normal,question
+restaurant,注文してもいいですか？,Can we order now?,注文,beginner,easy,can
+restaurant,これをください。,I will have this.,注文,beginner,easy,ordering
+restaurant,同じものをください。,I will have the same.,注文,beginner,easy,ordering
+restaurant,飲み物は水でお願いします。,Water is fine for me.,飲み物,beginner,normal,ordering
+restaurant,氷なしでお願いします。,No ice please.,好み,beginner,easy,ordering
+restaurant,料理をシェアできますか？,Can we share the dishes?,確認,beginner,normal,can
+restaurant,取り皿をいただけますか？,Could we have small plates?,依頼,intermediate,normal,could
+restaurant,フォークをいただけますか？,Could I have a fork?,依頼,beginner,normal,could
+restaurant,注文を変更できますか？,Can I change my order?,変更,intermediate,normal,can
+restaurant,これはまだ来ていません。,This has not arrived yet.,未着,intermediate,normal,present-perfect
+restaurant,もう少し時間がかかりますか？,Will it take a little longer?,確認,intermediate,normal,future
+restaurant,料理はとてもおいしいです。,The food is very good.,感想,beginner,easy,present-simple
+restaurant,お腹がいっぱいです。,I am full.,感想,beginner,easy,present-simple
+restaurant,残りを持ち帰れますか？,Can I take the rest home?,持ち帰り,intermediate,normal,can
+restaurant,お会計をお願いします。,Can we have the bill?,会計,beginner,normal,can
+restaurant,別々に払えますか？,Can we pay separately?,会計,intermediate,normal,can|payment
+restaurant,カードで払えますか？,Can I pay by card?,会計,beginner,normal,can|payment
+restaurant,チップは含まれていますか？,Is the tip included?,確認,intermediate,hard,passive|question
+restaurant,領収書をいただけますか？,Could I have a receipt?,会計,beginner,normal,could
+restaurant,席を移ってもいいですか？,Can we move to another table?,席変更,intermediate,normal,can
+restaurant,少し静かな席はありますか？,Do you have a quieter table?,席希望,intermediate,hard,comparative
+restaurant,子ども用の椅子はありますか？,Do you have a high chair?,家族,beginner,normal,question
+restaurant,水を追加してもらえますか？,Could we have more water?,依頼,beginner,normal,could
+restaurant,写真を撮ってもらえますか？,Could you take a picture for us?,依頼,intermediate,normal,could
+restaurant,トイレはどこですか？,Where is the restroom?,場所,beginner,easy,question
+restaurant,少し待ってもらえますか？,Could you give us a minute?,待つ,intermediate,normal,could
+restaurant,この席で大丈夫です。,This table is fine.,返答,beginner,easy,response
+restaurant,辛さを控えめにできますか？,Can you make it less spicy?,依頼,intermediate,normal,can
+restaurant,ソースを別にできますか？,Can I have the sauce on the side?,依頼,intermediate,normal,can
+restaurant,また来たいです。,I would like to come again.,感想,intermediate,normal,would-like
+shopping,これはいくらですか？,How much is this?,値段,beginner,easy,question
+shopping,試着できますか？,Can I try this on?,試着,beginner,normal,can
+shopping,試着室はどこですか？,Where is the fitting room?,場所,beginner,normal,question
+shopping,別のサイズはありますか？,Do you have another size?,サイズ,beginner,normal,question
+shopping,小さいサイズはありますか？,Do you have a smaller size?,サイズ,beginner,normal,comparative
+shopping,大きいサイズはありますか？,Do you have a larger size?,サイズ,beginner,normal,comparative
+shopping,別の色はありますか？,Do you have another color?,色,beginner,easy,question
+shopping,これを探しています。,I am looking for this.,探し物,beginner,normal,present-continuous
+shopping,おすすめはありますか？,Do you have any recommendations?,おすすめ,intermediate,normal,question
+shopping,セール品はどこですか？,Where are the sale items?,場所,beginner,normal,question
+shopping,これはセール中ですか？,Is this on sale?,確認,beginner,easy,question
+shopping,カードで払えますか？,Can I pay by card?,支払い,beginner,normal,can|payment
+shopping,現金で払います。,I will pay in cash.,支払い,beginner,easy,future|payment
+shopping,袋をください。,Can I have a bag?,袋,beginner,easy,can
+shopping,ギフト用に包めますか？,Can you wrap it as a gift?,包装,intermediate,normal,can
+shopping,返品できますか？,Can I return this?,返品,beginner,normal,can
+shopping,交換できますか？,Can I exchange this?,交換,beginner,normal,can
+shopping,レシートをなくしました。,I lost the receipt.,トラブル,beginner,normal,past-simple
+shopping,これは壊れています。,This is broken.,トラブル,beginner,easy,adjective
+shopping,保証はありますか？,Does it have a warranty?,保証,intermediate,hard,question
+shopping,少し考えます。,I will think about it.,保留,beginner,normal,future
+shopping,見るだけです。,I am just looking.,店員への返答,beginner,normal,present-continuous
+shopping,これを買います。,I will take this.,購入,beginner,easy,future
+shopping,免税できますか？,Can I get this tax free?,免税,intermediate,normal,can
+shopping,パスポートが必要ですか？,Do I need my passport?,確認,beginner,normal,question
+shopping,在庫はありますか？,Do you have it in stock?,在庫,intermediate,normal,question
+shopping,オンラインでも買えますか？,Can I buy it online?,確認,beginner,normal,can
+shopping,配送できますか？,Can you ship this?,配送,beginner,normal,can
+shopping,いつ届きますか？,When will it arrive?,配送,beginner,normal,future|question
+shopping,送料はいくらですか？,How much is shipping?,送料,beginner,normal,question
+shopping,これは本物ですか？,Is this authentic?,確認,intermediate,hard,question
+shopping,割引できますか？,Can you give me a discount?,値引き,intermediate,normal,can
+shopping,予算は50ドルです。,My budget is fifty dollars.,予算,beginner,normal,present-simple
+shopping,もう少し安いものはありますか？,Do you have something cheaper?,比較,intermediate,normal,comparative
+shopping,人気の商品はどれですか？,Which item is popular?,おすすめ,beginner,normal,question
+shopping,これに合うものはありますか？,Do you have something that goes with this?,提案,intermediate,hard,relative-clause
+shopping,サイズが合いません。,It does not fit.,試着,beginner,normal,present-simple
+shopping,ぴったりです。,It fits perfectly.,試着,beginner,normal,present-simple
+shopping,少しきついです。,It is a little tight.,試着,beginner,normal,adjective
+shopping,これを取り置きできますか？,Can you hold this for me?,取り置き,intermediate,normal,can
+hotel,チェックインをお願いします。,I would like to check in.,チェックイン,beginner,normal,would-like
+hotel,予約しています。,I have a reservation.,予約,beginner,easy,have
+hotel,名前は田中です。,The name is Tanaka.,予約名,beginner,easy,present-simple
+hotel,パスポートはこちらです。,Here is my passport.,提示,beginner,easy,set-phrase
+hotel,朝食は含まれていますか？,Is breakfast included?,確認,intermediate,normal,passive|question
+hotel,Wi-Fiのパスワードは何ですか？,What is the Wi-Fi password?,設備,beginner,normal,question
+hotel,部屋は何階ですか？,What floor is my room on?,確認,intermediate,normal,question
+hotel,荷物を預けられますか？,Can I leave my luggage here?,荷物,beginner,normal,can
+hotel,早めにチェックインできますか？,Can I check in early?,依頼,beginner,normal,can
+hotel,遅めにチェックアウトできますか？,Can I check out late?,依頼,beginner,normal,can
+hotel,部屋を変えられますか？,Can I change rooms?,依頼,beginner,normal,can
+hotel,エアコンが動きません。,The air conditioner is not working.,トラブル,intermediate,normal,present-continuous
+hotel,お湯が出ません。,There is no hot water.,トラブル,beginner,normal,there-is
+hotel,部屋が寒いです。,The room is cold.,トラブル,beginner,easy,adjective
+hotel,タオルを追加でください。,Could I have extra towels?,依頼,beginner,normal,could
+hotel,清掃をお願いします。,Could you clean the room?,依頼,beginner,normal,could
+hotel,起こしてください。,Could you give me a wake-up call?,依頼,intermediate,hard,could
+hotel,タクシーを呼んでもらえますか？,Could you call a taxi for me?,依頼,intermediate,normal,could
+hotel,近くにコンビニはありますか？,Is there a convenience store nearby?,場所,beginner,normal,there-is
+hotel,駅までどう行けばいいですか？,How can I get to the station?,道案内,beginner,normal,question
+hotel,鍵をなくしました。,I lost my key.,トラブル,beginner,normal,past-simple
+hotel,カードキーが使えません。,My key card does not work.,トラブル,beginner,normal,present-simple
+hotel,静かな部屋がいいです。,I would like a quiet room.,希望,intermediate,normal,would-like
+hotel,禁煙の部屋をお願いします。,I would like a non-smoking room.,希望,intermediate,normal,would-like
+hotel,眺めの良い部屋はありますか？,Do you have a room with a nice view?,希望,intermediate,normal,question
+hotel,チェックアウトをお願いします。,I would like to check out.,チェックアウト,beginner,normal,would-like
+hotel,領収書をください。,Could I have a receipt?,会計,beginner,normal,could
+hotel,ミニバーは使っていません。,I did not use the minibar.,会計,intermediate,normal,past-simple
+hotel,忘れ物をしました。,I left something in my room.,忘れ物,intermediate,normal,past-simple
+hotel,滞在は快適でした。,My stay was comfortable.,感想,intermediate,normal,past-simple
+airport,搭乗口はどこですか？,Where is the gate?,場所,beginner,easy,question
+airport,チェックインカウンターはどこですか？,Where is the check-in counter?,場所,beginner,normal,question
+airport,パスポートはこちらです。,Here is my passport.,提示,beginner,easy,set-phrase
+airport,荷物を預けたいです。,I would like to check this bag.,荷物,intermediate,normal,would-like
+airport,機内持ち込みだけです。,I only have carry-on luggage.,荷物,intermediate,normal,have
+airport,窓側の席をお願いします。,I would like a window seat.,席希望,beginner,normal,would-like
+airport,通路側の席をお願いします。,I would like an aisle seat.,席希望,intermediate,hard,would-like
+airport,便は遅れていますか？,Is the flight delayed?,確認,intermediate,normal,passive|question
+airport,搭乗はいつ始まりますか？,When does boarding start?,確認,beginner,normal,question
+airport,乗り継ぎがあります。,I have a connecting flight.,乗り継ぎ,intermediate,normal,have
+airport,乗り継ぎ便に間に合いますか？,Will I make my connecting flight?,確認,intermediate,hard,future
+airport,保安検査場はどこですか？,Where is security?,場所,beginner,normal,question
+airport,これは持ち込めますか？,Can I bring this on board?,確認,intermediate,normal,can
+airport,液体は入っています。,There are liquids inside.,手荷物,intermediate,normal,there-are
+airport,荷物が出てきません。,My bag has not arrived.,荷物トラブル,intermediate,normal,present-perfect
+airport,荷物をなくしました。,I lost my luggage.,荷物トラブル,beginner,normal,past-simple
+airport,到着ロビーはどこですか？,Where is the arrivals hall?,場所,beginner,normal,question
+airport,出発ロビーはどこですか？,Where is the departures hall?,場所,beginner,normal,question
+airport,両替所はどこですか？,Where is the currency exchange?,場所,intermediate,normal,question
+airport,SIMカードはどこで買えますか？,Where can I buy a SIM card?,買い物,beginner,normal,can|question
+airport,タクシー乗り場はどこですか？,Where is the taxi stand?,場所,beginner,normal,question
+airport,市内までいくらですか？,How much is it to the city center?,料金,beginner,normal,question
+airport,空港バスはどこですか？,Where is the airport bus?,交通,beginner,easy,question
+airport,この便は何番ゲートですか？,What gate is this flight?,確認,beginner,normal,question
+airport,搭乗券を見せます。,I will show my boarding pass.,提示,beginner,normal,future
+airport,オンラインでチェックインしました。,I checked in online.,チェックイン,beginner,normal,past-simple
+airport,座席を変更できますか？,Can I change my seat?,依頼,beginner,normal,can
+airport,荷物の重量制限はいくらですか？,What is the baggage weight limit?,確認,intermediate,hard,question
+airport,超過料金はいくらですか？,How much is the excess baggage fee?,料金,intermediate,hard,question
+airport,税関申告が必要ですか？,Do I need to declare this?,税関,intermediate,hard,question
+airport,観光で来ました。,I am here for sightseeing.,入国,beginner,normal,present-simple
+airport,滞在は5日間です。,I will stay for five days.,入国,beginner,normal,future
+airport,ホテルに泊まります。,I will stay at a hotel.,入国,beginner,normal,future
+airport,帰りの航空券があります。,I have a return ticket.,入国,beginner,normal,have
+airport,この列で合っていますか？,Is this the right line?,確認,beginner,normal,question
+airport,優先搭乗はありますか？,Is there priority boarding?,確認,intermediate,normal,there-is
+airport,充電できる場所はありますか？,Is there a place to charge my phone?,設備,intermediate,normal,there-is
+airport,免税店はどこですか？,Where is the duty-free shop?,場所,beginner,normal,question
+airport,飛行機に酔いやすいです。,I get airsick easily.,体調,intermediate,hard,present-simple
+airport,水を買いたいです。,I want to buy water.,買い物,beginner,easy,want-to
+directions,駅はどこですか？,Where is the station?,場所,beginner,easy,question
+directions,ここから近いですか？,Is it close from here?,距離,beginner,easy,question
+directions,歩いて行けますか？,Can I walk there?,移動,beginner,easy,can
+directions,どのくらいかかりますか？,How long does it take?,時間,beginner,normal,question
+directions,右に曲がってください。,Turn right please.,道案内,beginner,easy,imperative
+directions,左に曲がってください。,Turn left please.,道案内,beginner,easy,imperative
+directions,まっすぐ進んでください。,Go straight please.,道案内,beginner,easy,imperative
+directions,信号で右に曲がります。,Turn right at the traffic light.,道案内,beginner,normal,imperative
+directions,角を左に曲がります。,Turn left at the corner.,道案内,beginner,normal,imperative
+directions,地図を見せてもらえますか？,Could you show me the map?,依頼,intermediate,normal,could
+directions,この住所に行きたいです。,I want to go to this address.,目的地,beginner,normal,want-to
+directions,ここで降りますか？,Do I get off here?,交通,beginner,normal,question
+directions,次の駅で降ります。,Get off at the next station.,交通,beginner,normal,imperative
+directions,何番出口ですか？,Which exit should I take?,出口,intermediate,normal,should
+directions,反対方向ですか？,Is it the opposite direction?,確認,intermediate,normal,question
+directions,道に迷いました。,I am lost.,困った時,beginner,easy,present-simple
+directions,助けてもらえますか？,Can you help me?,依頼,beginner,easy,can
+directions,もう一度言ってください。,Could you say that again?,聞き返し,beginner,normal,could
+directions,ゆっくり話してください。,Please speak slowly.,依頼,beginner,easy,imperative
+directions,バス停はどこですか？,Where is the bus stop?,場所,beginner,easy,question
+directions,このバスは駅に行きますか？,Does this bus go to the station?,確認,beginner,normal,question
+directions,タクシーで行くべきですか？,Should I take a taxi?,提案,intermediate,normal,should
+directions,近道はありますか？,Is there a shortcut?,道案内,intermediate,normal,there-is
+directions,この道で合っていますか？,Am I on the right road?,確認,intermediate,normal,question
+directions,入口はどこですか？,Where is the entrance?,場所,beginner,easy,question
+directions,出口はどこですか？,Where is the exit?,場所,beginner,easy,question
+directions,エレベーターはどこですか？,Where is the elevator?,場所,beginner,easy,question
+directions,階段はどこですか？,Where are the stairs?,場所,beginner,easy,question
+directions,この近くにトイレはありますか？,Is there a restroom nearby?,場所,beginner,normal,there-is
+directions,案内所はどこですか？,Where is the information desk?,場所,beginner,normal,question
+smalltalk,今日はいい天気ですね。,It is nice weather today.,天気,beginner,easy,weather
+smalltalk,今日は暑いですね。,It is hot today.,天気,beginner,easy,weather
+smalltalk,今日は寒いですね。,It is cold today.,天気,beginner,easy,weather
+smalltalk,週末はどうでしたか？,How was your weekend?,雑談,beginner,normal,past-simple|question
+smalltalk,週末は楽しかったです。,My weekend was fun.,返答,beginner,normal,past-simple
+smalltalk,何をするのが好きですか？,What do you like to do?,趣味,beginner,normal,question
+smalltalk,映画を見るのが好きです。,I like watching movies.,趣味,beginner,normal,gerund
+smalltalk,音楽は好きですか？,Do you like music?,趣味,beginner,easy,question
+smalltalk,どんな音楽を聴きますか？,What kind of music do you listen to?,趣味,intermediate,normal,question
+smalltalk,最近忙しいですか？,Have you been busy lately?,近況,intermediate,normal,present-perfect
+smalltalk,最近とても忙しいです。,I have been very busy lately.,返答,intermediate,normal,present-perfect
+smalltalk,仕事はどうですか？,How is work?,近況,beginner,easy,question
+smalltalk,仕事は順調です。,Work is going well.,返答,beginner,normal,present-continuous
+smalltalk,この辺りに詳しいですか？,Do you know this area well?,場所,beginner,normal,question
+smalltalk,ここは初めてです。,This is my first time here.,会話,beginner,normal,set-phrase
+smalltalk,よくここに来ますか？,Do you come here often?,頻度,beginner,normal,adverb-frequency
+smalltalk,おすすめの場所はありますか？,Do you have any places to recommend?,おすすめ,intermediate,normal,question
+smalltalk,食べ物は何が好きですか？,What food do you like?,好み,beginner,easy,question
+smalltalk,辛い食べ物が好きです。,I like spicy food.,好み,beginner,easy,like
+smalltalk,日本に来たことはありますか？,Have you been to Japan?,経験,intermediate,normal,present-perfect
+smalltalk,いつ日本に来ましたか？,When did you come to Japan?,過去,beginner,normal,past-simple|question
+smalltalk,どのくらい滞在しますか？,How long will you stay?,予定,beginner,normal,future
+smalltalk,写真を撮るのが好きです。,I like taking photos.,趣味,beginner,normal,gerund
+smalltalk,スポーツはしますか？,Do you play sports?,趣味,beginner,easy,question
+smalltalk,時々テニスをします。,I sometimes play tennis.,頻度,beginner,easy,adverb-frequency
+smalltalk,このイベントは楽しいですね。,This event is fun.,感想,beginner,easy,present-simple
+smalltalk,いいお店ですね。,This is a nice place.,感想,beginner,easy,present-simple
+smalltalk,また話せてよかったです。,It was nice talking with you.,別れ際,intermediate,normal,gerund
+smalltalk,連絡先を交換できますか？,Can we exchange contact information?,依頼,intermediate,normal,can
+smalltalk,また会えるといいですね。,I hope we can meet again.,別れ際,intermediate,normal,hope|can
