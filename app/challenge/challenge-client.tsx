@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { getLevelLabel, getSceneLabel } from "@/lib/constants";
 import { averageScore, toPercent } from "@/lib/learning";
 import { scoreAnswer } from "@/lib/scoring";
 import { createSupabaseClient, type Phrase } from "@/lib/supabase";
@@ -151,7 +152,7 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
             <option value="all">全カテゴリ</option>
             {sceneOptions.map((scene) => (
               <option key={scene} value={scene}>
-                {scene}
+                {getSceneLabel(scene)}
               </option>
             ))}
           </select>
@@ -213,7 +214,7 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
         <>
           <div className="phraseBox">
             <span className="phraseLabel">
-              {currentPhrase.scene} / {currentPhrase.level}
+              {getSceneLabel(currentPhrase.scene)} / {getLevelLabel(currentPhrase.level)}
             </span>
             <p className="japanesePhrase">{currentPhrase.japanese}</p>
             {currentPhrase.hint ? <p className="metaText">ヒント: {currentPhrase.hint}</p> : null}

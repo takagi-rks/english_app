@@ -1,3 +1,4 @@
+import { getSceneLabel } from "@/lib/constants";
 import { createSupabaseClient, type PracticeLog } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -65,7 +66,7 @@ export default async function HistoryPage() {
             <tbody>
               {logs.map((log) => (
                 <tr key={log.id}>
-                  <td>{log.scene}</td>
+                  <td>{getSceneLabel(log.scene)}</td>
                   <td>{log.japanese}</td>
                   <td>{log.user_answer}</td>
                   <td>{log.correct_english}</td>

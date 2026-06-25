@@ -2,6 +2,14 @@
 
 import { useMemo, useState, type ChangeEvent } from "react";
 import {
+  getLevelLabel,
+  getPronunciationDifficultyLabel,
+  getSceneLabel,
+  LEVEL_OPTIONS,
+  PRONUNCIATION_DIFFICULTY_OPTIONS,
+  SCENE_OPTIONS,
+} from "@/lib/constants";
+import {
   createSupabaseClient,
   type Phrase,
   type PhraseLevel,
@@ -45,20 +53,6 @@ type PhrasesClientProps = {
   initialPhrases: Phrase[];
   initialErrorMessage: string | null;
 };
-
-const sceneOptions = [
-  "greeting",
-  "self_introduction",
-  "cafe",
-  "restaurant",
-  "shopping",
-  "hotel",
-  "airport",
-  "directions",
-  "smalltalk",
-] as const;
-const levelOptions: PhraseLevel[] = ["beginner", "intermediate", "advanced"];
-const pronunciationDifficultyOptions: PronunciationDifficulty[] = ["easy", "normal", "hard"];
 
 const emptyForm: PhraseForm = {
   scene: "greeting",
@@ -106,11 +100,11 @@ function validateForm(form: PhraseForm): string | null {
     return "正解英文を入力してください。";
   }
 
-  if (!levelOptions.includes(form.level)) {
+  if (!LEVEL_OPTIONS.includes(form.level)) {
     return "レベルを選択してください。";
   }
 
-  if (!pronunciationDifficultyOptions.includes(form.pronunciation_difficulty)) {
+  if (!PRONUNCIATION_DIFFICULTY_OPTIONS.includes(form.pronunciation_difficulty)) {
     return "発音難易度を選択してください。";
   }
 
@@ -179,11 +173,11 @@ function parseCsv(text: string): string[][] {
 }
 
 function isPhraseLevel(value: string): value is PhraseLevel {
-  return levelOptions.includes(value as PhraseLevel);
+  return LEVEL_OPTIONS.includes(value as PhraseLevel);
 }
 
 function isPronunciationDifficulty(value: string): value is PronunciationDifficulty {
-  return pronunciationDifficultyOptions.includes(value as PronunciationDifficulty);
+  return PRONUNCIATION_DIFFICULTY_OPTIONS.includes(value as PronunciationDifficulty);
 }
 
 export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesClientProps) {
@@ -548,9 +542,9 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
             value={form.scene}
             onChange={(event) => setForm((current) => ({ ...current, scene: event.target.value }))}
           >
-            {sceneOptions.map((scene) => (
+            {SCENE_OPTIONS.map((scene) => (
               <option key={scene} value={scene}>
-                {scene}
+                {getSceneLabel(scene)}
               </option>
             ))}
           </select>
@@ -566,9 +560,9 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
               setForm((current) => ({ ...current, level: event.target.value as PhraseLevel }))
             }
           >
-            {levelOptions.map((level) => (
+            {LEVEL_OPTIONS.map((level) => (
               <option key={level} value={level}>
-                {level}
+                {getLevelLabel(level)}
               </option>
             ))}
           </select>
@@ -587,9 +581,9 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
               }))
             }
           >
-            {pronunciationDifficultyOptions.map((difficulty) => (
+            {PRONUNCIATION_DIFFICULTY_OPTIONS.map((difficulty) => (
               <option key={difficulty} value={difficulty}>
-                {difficulty}
+                {getPronunciationDifficultyLabel(difficulty)}
               </option>
             ))}
           </select>
@@ -727,11 +721,11 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
                     <tr key={row.rowNumber}>
                       <td>{row.rowNumber}</td>
                       <td>{row.message}</td>
-                      <td>{row.payload.scene}</td>
-                      <td>{row.payload.level}</td>
+                      <td>{getSceneLabel(row.payload.scene)}</td>
+                      <td>{getLevelLabel(row.payload.level)}</td>
                       <td>{row.payload.japanese}</td>
                       <td>{row.payload.english}</td>
-                      <td>{row.payload.pronunciation_difficulty}</td>
+                      <td>{getPronunciationDifficultyLabel(row.payload.pronunciation_difficulty)}</td>
                       <td>{row.payload.grammar_tags.join(", ")}</td>
                     </tr>
                   ))}
@@ -756,9 +750,9 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
               onChange={(event) => setFilterScene(event.target.value)}
             >
               <option value="all">すべて</option>
-              {sceneOptions.map((scene) => (
+              {SCENE_OPTIONS.map((scene) => (
                 <option key={scene} value={scene}>
-                  {scene}
+                  {getSceneLabel(scene)}
                 </option>
               ))}
             </select>
@@ -772,9 +766,9 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
               onChange={(event) => setFilterLevel(event.target.value as "all" | PhraseLevel)}
             >
               <option value="all">すべて</option>
-              {levelOptions.map((level) => (
+              {LEVEL_OPTIONS.map((level) => (
                 <option key={level} value={level}>
-                  {level}
+                  {getLevelLabel(level)}
                 </option>
               ))}
             </select>
@@ -800,9 +794,9 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
               }
             >
               <option value="all">すべて</option>
-              {pronunciationDifficultyOptions.map((difficulty) => (
+              {PRONUNCIATION_DIFFICULTY_OPTIONS.map((difficulty) => (
                 <option key={difficulty} value={difficulty}>
-                  {difficulty}
+                  {getPronunciationDifficultyLabel(difficulty)}
                 </option>
               ))}
             </select>
@@ -834,9 +828,9 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
               <tbody>
                 {filteredPhrases.map((phrase) => (
                   <tr key={phrase.id}>
-                    <td>{phrase.scene}</td>
-                    <td>{phrase.level}</td>
-                    <td>{phrase.pronunciation_difficulty}</td>
+                    <td>{getSceneLabel(phrase.scene)}</td>
+                    <td>{getLevelLabel(phrase.level)}</td>
+                    <td>{getPronunciationDifficultyLabel(phrase.pronunciation_difficulty)}</td>
                     <td>{phrase.japanese}</td>
                     <td>{phrase.english}</td>
                     <td>{phrase.hint}</td>

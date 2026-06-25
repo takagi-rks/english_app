@@ -1,3 +1,4 @@
+import { getSceneLabel } from "@/lib/constants";
 import {
   averageScore,
   computeBadges,
@@ -203,7 +204,7 @@ export default async function StatsPage() {
           <div className="chartList">
             {stats.sceneRows.map((row) => (
               <div className="chartRow" key={row.label}>
-                <span>{row.label}</span>
+                <span>{getSceneLabel(row.label)}</span>
                 <Bar value={row.accuracy} />
                 <strong>{row.accuracy}%</strong>
               </div>

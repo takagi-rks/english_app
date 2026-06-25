@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { getSceneLabel } from "@/lib/constants";
 import { evaluatePronunciation, type PronunciationEvaluation } from "@/lib/learning";
 import { scoreAnswer, type ScoreBreakdown } from "@/lib/scoring";
 import { createSupabaseClient, type Phrase } from "@/lib/supabase";
@@ -306,7 +307,7 @@ export function PracticeClient({
           >
             {scenes.map((scene) => (
               <option key={scene} value={scene}>
-                {scene}
+                {getSceneLabel(scene)}
               </option>
             ))}
           </select>
@@ -342,7 +343,7 @@ export function PracticeClient({
         {selectedPhrase ? (
           <>
             <div className="phraseBox">
-              <span className="phraseLabel">{selectedPhrase.scene}</span>
+              <span className="phraseLabel">{getSceneLabel(selectedPhrase.scene)}</span>
               <p className="japanesePhrase">{selectedPhrase.japanese}</p>
             </div>
 
