@@ -1,41 +1,59 @@
 import Link from "next/link";
-import { computeLearningSummary } from "@/lib/learning";
+import { computeBadges, computeLearningSummary, computeLevelProgress } from "@/lib/learning";
 import { createSupabaseClient, type PracticeLog } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 async function getLearningSummary(): Promise<{
   summary: ReturnType<typeof computeLearningSummary>;
+  levelProgress: ReturnType<typeof computeLevelProgress>;
+  badges: ReturnType<typeof computeBadges>;
   errorMessage: string | null;
 }> {
+  const emptySummary = computeLearningSummary([]);
+  const emptyLevelProgress = computeLevelProgress([]);
+  const emptyBadges = computeBadges([], emptySummary);
+
   try {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
       .from("english_practice_logs")
-      .select("score, is_correct, practiced_at");
+      .select("score, is_correct, practiced_at, pronunciation_score");
 
     if (error) {
       return {
-        summary: computeLearningSummary([]),
+        summary: emptySummary,
+        levelProgress: emptyLevelProgress,
+        badges: emptyBadges,
         errorMessage: `学習状況の取得に失敗しました: ${error.message}`,
       };
     }
 
+    const logs = data satisfies Pick<
+      PracticeLog,
+      "score" | "is_correct" | "practiced_at" | "pronunciation_score"
+    >[];
+    const summary = computeLearningSummary(logs);
+
     return {
-      summary: computeLearningSummary(data satisfies Pick<PracticeLog, "score" | "is_correct" | "practiced_at">[]),
+      summary,
+      levelProgress: computeLevelProgress(logs),
+      badges: computeBadges(logs, summary),
       errorMessage: null,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "不明なエラーです。";
     return {
-      summary: computeLearningSummary([]),
+      summary: emptySummary,
+      levelProgress: emptyLevelProgress,
+      badges: emptyBadges,
       errorMessage: `学習状況の取得に失敗しました: ${message}`,
     };
   }
 }
 
 export default async function HomePage() {
-  const { summary, errorMessage } = await getLearningSummary();
+  const { summary, levelProgress, badges, errorMessage } = await getLearningSummary();
 
   return (
     <section className="page">
@@ -83,6 +101,40 @@ export default async function HomePage() {
             <span className="metricLabel">最高ストリーク</span>
             <strong>{summary.bestStreak}日</strong>
           </div>
+        </div>
+      </section>
+
+      <section className="panel sectionGap">
+        <h2 className="sectionTitle">レベル</h2>
+        <div className="metricGrid">
+          <div className="metricBox">
+            <span className="metricLabel">現在レベル</span>
+            <strong>{levelProgress.level}</strong>
+          </div>
+          <div className="metricBox">
+            <span className="metricLabel">現在XP</span>
+            <strong>{levelProgress.totalXp}</strong>
+          </div>
+          <div className="metricBox">
+            <span className="metricLabel">次のレベルまで</span>
+            <strong>{levelProgress.xpToNextLevel} XP</strong>
+          </div>
+        </div>
+        <div className="progressTrack sectionGap" aria-label={`レベル進捗 ${levelProgress.progressPercent}%`}>
+          <div className="progressFill" style={{ width: `${levelProgress.progressPercent}%` }} />
+        </div>
+      </section>
+
+      <section className="panel sectionGap">
+        <h2 className="sectionTitle">バッジ</h2>
+        <div className="badgeGrid">
+          {badges.map((badge) => (
+            <div className={badge.achieved ? "badgeBox badgeAchieved" : "badgeBox"} key={badge.id}>
+              <strong>{badge.label}</strong>
+              <span>{badge.description}</span>
+              <small>{badge.achieved ? "達成済み" : "未達成"}</small>
+            </div>
+          ))}
         </div>
       </section>
     </section>

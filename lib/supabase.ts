@@ -25,9 +25,14 @@ export type PracticeLog = {
   score: number;
   is_correct: boolean;
   practiced_at: string;
+  pronunciation_score: number | null;
+  recognized_speech: string | null;
 };
 
-type InsertPracticeLog = Omit<PracticeLog, "id">;
+type InsertPracticeLog = Omit<PracticeLog, "id" | "pronunciation_score" | "recognized_speech"> & {
+  pronunciation_score?: number | null;
+  recognized_speech?: string | null;
+};
 
 export type Database = {
   public: {

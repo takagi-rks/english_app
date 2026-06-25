@@ -11,7 +11,7 @@ async function getPracticeLogs(): Promise<{
     const { data, error } = await supabase
       .from("english_practice_logs")
       .select(
-        "id, phrase_id, scene, japanese, correct_english, user_answer, score, is_correct, practiced_at",
+        "id, phrase_id, scene, japanese, correct_english, user_answer, score, is_correct, practiced_at, pronunciation_score, recognized_speech",
       )
       .order("practiced_at", { ascending: false })
       .limit(100);

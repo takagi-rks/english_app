@@ -1,4 +1,13 @@
-import { averageScore, getJstDateKey, toPercent } from "@/lib/learning";
+import {
+  averageScore,
+  computeBadges,
+  computeCalendarDays,
+  computeLearningSummary,
+  getJstDateKey,
+  toPercent,
+  type Badge,
+  type CalendarDay,
+} from "@/lib/learning";
 import { createSupabaseClient } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +17,7 @@ type PracticeLogForStats = {
   score: number;
   is_correct: boolean;
   practiced_at: string;
+  pronunciation_score: number | null;
 };
 
 type RatioRow = {
@@ -27,6 +37,8 @@ type StatsData = {
   averageScore: number;
   sceneRows: RatioRow[];
   dailyRows: DailyRow[];
+  calendarDays: CalendarDay[];
+  badges: Badge[];
 };
 
 function buildRatioRows<T extends string>(
@@ -52,13 +64,15 @@ async function getStats(): Promise<{
     averageScore: 0,
     sceneRows: [],
     dailyRows: [],
+    calendarDays: computeCalendarDays([]),
+    badges: computeBadges([], computeLearningSummary([])),
   };
 
   try {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
       .from("english_practice_logs")
-      .select("scene, score, is_correct, practiced_at");
+      .select("scene, score, is_correct, practiced_at, pronunciation_score");
 
     if (error) {
       return {
@@ -68,6 +82,7 @@ async function getStats(): Promise<{
     }
 
     const logs = data satisfies PracticeLogForStats[];
+    const summary = computeLearningSummary(logs);
     const correctCount = logs.filter((log) => log.is_correct).length;
     const byScene = new Map<string, { scores: number[]; correctCount: number }>();
     const byDate = new Map<string, { scores: number[]; correctCount: number }>();
@@ -96,6 +111,8 @@ async function getStats(): Promise<{
         averageScore: averageScore(logs.map((log) => log.score)),
         sceneRows: buildRatioRows(byScene),
         dailyRows,
+        calendarDays: computeCalendarDays(logs),
+        badges: computeBadges(logs, summary),
       },
       errorMessage: null,
     };
@@ -106,6 +123,10 @@ async function getStats(): Promise<{
       errorMessage: `学習統計の取得に失敗しました: ${message}`,
     };
   }
+}
+
+function getCalendarClassName(day: CalendarDay): string {
+  return `calendarCell calendarLevel${day.intensity}`;
 }
 
 function Bar({ value }: { value: number }) {
@@ -142,6 +163,35 @@ export default async function StatsPage() {
             <span className="metricLabel">累計回答数</span>
             <strong>{stats.totalCount}</strong>
           </div>
+        </div>
+      </section>
+
+      <section className="panel sectionGap">
+        <h2 className="sectionTitle">学習カレンダー</h2>
+        <div className="calendarGrid" aria-label="過去35日分の学習カレンダー">
+          {stats.calendarDays.map((day) => (
+            <div
+              className={getCalendarClassName(day)}
+              key={day.dateKey}
+              title={`${day.dateKey}: ${day.answerCount}件`}
+            >
+              <span>{day.answerCount}</span>
+            </div>
+          ))}
+        </div>
+        <p className="metaText">薄い順に 0件 / 1〜4件 / 5〜9件 / 10件以上 を表します。</p>
+      </section>
+
+      <section className="panel sectionGap">
+        <h2 className="sectionTitle">バッジ</h2>
+        <div className="badgeGrid">
+          {stats.badges.map((badge) => (
+            <div className={badge.achieved ? "badgeBox badgeAchieved" : "badgeBox"} key={badge.id}>
+              <strong>{badge.label}</strong>
+              <span>{badge.description}</span>
+              <small>{badge.achieved ? "達成済み" : "未達成"}</small>
+            </div>
+          ))}
         </div>
       </section>
 
