@@ -11,7 +11,9 @@ async function getChallengePhrases(): Promise<{
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
       .from("english_phrases")
-      .select("id, scene, japanese, english, hint, level, created_at");
+      .select(
+        "id, scene, japanese, english, hint, level, pronunciation_difficulty, grammar_tags, created_at",
+      );
 
     if (error) {
       return {

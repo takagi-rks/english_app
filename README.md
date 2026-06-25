@@ -21,6 +21,8 @@ create table english_phrases (
   english text not null,
   hint text not null default '',
   level text not null default 'beginner' check (level in ('beginner', 'intermediate', 'advanced')),
+  pronunciation_difficulty text not null default 'easy' check (pronunciation_difficulty in ('easy', 'normal', 'hard')),
+  grammar_tags text[] not null default '{}',
   created_at timestamptz not null default now(),
   constraint english_phrases_unique_phrase unique (scene, japanese, english, level)
 );
@@ -68,11 +70,22 @@ alter table english_phrases
   add column if not exists level text not null default 'beginner';
 
 alter table english_phrases
+  add column if not exists pronunciation_difficulty text not null default 'easy',
+  add column if not exists grammar_tags text[] not null default '{}';
+
+alter table english_phrases
   drop constraint if exists english_phrases_level_check;
 
 alter table english_phrases
   add constraint english_phrases_level_check
   check (level in ('beginner', 'intermediate', 'advanced'));
+
+alter table english_phrases
+  drop constraint if exists english_phrases_pronunciation_difficulty_check;
+
+alter table english_phrases
+  add constraint english_phrases_pronunciation_difficulty_check
+  check (pronunciation_difficulty in ('easy', 'normal', 'hard'));
 
 with duplicates as (
   select
@@ -111,3 +124,29 @@ insert into english_phrases (scene, japanese, english, hint, level) values
   ('greeting', 'お会いできてうれしいです。', 'Nice to meet you.', '初対面のあいさつです。', 'beginner'),
   ('smalltalk', '週末はどうでしたか？', 'How was your weekend?', '軽い雑談を始める表現です。', 'intermediate');
 ```
+
+## CSV Import
+
+`/phrases` supports UTF-8 CSV import with a header row.
+
+Required columns:
+
+```text
+scene,japanese,english,level
+```
+
+Optional columns:
+
+```text
+hint,pronunciation_difficulty,grammar_tags
+```
+
+`grammar_tags` accepts multiple tags separated by `|`.
+
+```csv
+scene,japanese,english,hint,level,pronunciation_difficulty,grammar_tags
+greeting,こんにちは。,Hello.,昼の挨拶,beginner,easy,present-simple
+cafe,コーヒーをください。,"I'd like a coffee please.",注文,beginner,normal,would-like|ordering
+```
+
+A 300-row starter CSV is available at `docs/sample-phrases.csv`.

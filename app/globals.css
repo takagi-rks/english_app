@@ -210,9 +210,28 @@ a:focus-visible {
 
 .filterGrid {
   display: grid;
-  grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr) minmax(220px, 2fr);
+  grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(220px, 2fr);
   gap: 12px;
   margin-bottom: 12px;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.tagPill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #e9f3ef;
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .phraseBox {

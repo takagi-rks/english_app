@@ -7,10 +7,13 @@ export type Phrase = {
   english: string;
   hint: string;
   level: PhraseLevel;
+  pronunciation_difficulty: PronunciationDifficulty;
+  grammar_tags: string[];
   created_at?: string;
 };
 
 export type PhraseLevel = "beginner" | "intermediate" | "advanced";
+export type PronunciationDifficulty = "easy" | "normal" | "hard";
 
 export type PracticeLog = {
   id: string;

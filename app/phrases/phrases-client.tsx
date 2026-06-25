@@ -1,7 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { createSupabaseClient, type Phrase, type PhraseLevel } from "@/lib/supabase";
+import { useMemo, useState, type ChangeEvent } from "react";
+import {
+  createSupabaseClient,
+  type Phrase,
+  type PhraseLevel,
+  type PronunciationDifficulty,
+} from "@/lib/supabase";
 
 type PhraseForm = {
   scene: string;
@@ -9,6 +14,31 @@ type PhraseForm = {
   english: string;
   hint: string;
   level: PhraseLevel;
+  pronunciation_difficulty: PronunciationDifficulty;
+  grammarTagsInput: string;
+};
+
+type PhrasePayload = {
+  scene: string;
+  japanese: string;
+  english: string;
+  hint: string;
+  level: PhraseLevel;
+  pronunciation_difficulty: PronunciationDifficulty;
+  grammar_tags: string[];
+};
+
+type CsvPreviewRow = {
+  rowNumber: number;
+  payload: PhrasePayload;
+  status: "ready" | "skip" | "error";
+  message: string;
+};
+
+type ImportResult = {
+  successCount: number;
+  skipCount: number;
+  failureCount: number;
 };
 
 type PhrasesClientProps = {
@@ -16,8 +46,19 @@ type PhrasesClientProps = {
   initialErrorMessage: string | null;
 };
 
-const sceneOptions = ["greeting", "cafe", "shopping", "directions", "smalltalk"] as const;
+const sceneOptions = [
+  "greeting",
+  "self_introduction",
+  "cafe",
+  "restaurant",
+  "shopping",
+  "hotel",
+  "airport",
+  "directions",
+  "smalltalk",
+] as const;
 const levelOptions: PhraseLevel[] = ["beginner", "intermediate", "advanced"];
+const pronunciationDifficultyOptions: PronunciationDifficulty[] = ["easy", "normal", "hard"];
 
 const emptyForm: PhraseForm = {
   scene: "greeting",
@@ -25,6 +66,8 @@ const emptyForm: PhraseForm = {
   english: "",
   hint: "",
   level: "beginner",
+  pronunciation_difficulty: "easy",
+  grammarTagsInput: "",
 };
 
 function formatDate(value?: string): string {
@@ -45,6 +88,8 @@ function toForm(phrase: Phrase): PhraseForm {
     english: phrase.english,
     hint: phrase.hint,
     level: phrase.level,
+    pronunciation_difficulty: phrase.pronunciation_difficulty,
+    grammarTagsInput: phrase.grammar_tags.join(","),
   };
 }
 
@@ -65,10 +110,25 @@ function validateForm(form: PhraseForm): string | null {
     return "レベルを選択してください。";
   }
 
+  if (!pronunciationDifficultyOptions.includes(form.pronunciation_difficulty)) {
+    return "発音難易度を選択してください。";
+  }
+
   return null;
 }
 
-function isSamePhrase(phrase: Phrase, form: PhraseForm): boolean {
+function parseGrammarTags(value: string, separator: "," | "|"): string[] {
+  return value
+    .split(separator)
+    .map((tag) => tag.trim())
+    .filter((tag, index, tags) => tag.length > 0 && tags.indexOf(tag) === index);
+}
+
+function getPhraseKey(value: Pick<PhrasePayload, "scene" | "japanese" | "english" | "level">): string {
+  return [value.scene, value.japanese.trim(), value.english.trim(), value.level].join("\u0000");
+}
+
+function isSamePhrase(phrase: Phrase, form: PhrasePayload): boolean {
   return (
     phrase.scene === form.scene &&
     phrase.japanese.trim() === form.japanese.trim() &&
@@ -77,15 +137,71 @@ function isSamePhrase(phrase: Phrase, form: PhraseForm): boolean {
   );
 }
 
+function parseCsvLine(line: string): string[] {
+  const values: string[] = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let index = 0; index < line.length; index += 1) {
+    const character = line[index];
+    const nextCharacter = line[index + 1];
+
+    if (character === '"' && inQuotes && nextCharacter === '"') {
+      current += '"';
+      index += 1;
+      continue;
+    }
+
+    if (character === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (character === "," && !inQuotes) {
+      values.push(current.trim());
+      current = "";
+      continue;
+    }
+
+    current += character;
+  }
+
+  values.push(current.trim());
+  return values;
+}
+
+function parseCsv(text: string): string[][] {
+  return text
+    .replace(/^\uFEFF/, "")
+    .split(/\r?\n/)
+    .filter((line) => line.trim().length > 0)
+    .map(parseCsvLine);
+}
+
+function isPhraseLevel(value: string): value is PhraseLevel {
+  return levelOptions.includes(value as PhraseLevel);
+}
+
+function isPronunciationDifficulty(value: string): value is PronunciationDifficulty {
+  return pronunciationDifficultyOptions.includes(value as PronunciationDifficulty);
+}
+
 export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesClientProps) {
   const [phrases, setPhrases] = useState<Phrase[]>(initialPhrases);
   const [form, setForm] = useState<PhraseForm>(emptyForm);
   const [filterScene, setFilterScene] = useState("all");
   const [filterLevel, setFilterLevel] = useState<"all" | PhraseLevel>("all");
+  const [filterPronunciationDifficulty, setFilterPronunciationDifficulty] = useState<
+    "all" | PronunciationDifficulty
+  >("all");
   const [keyword, setKeyword] = useState("");
+  const [csvRows, setCsvRows] = useState<CsvPreviewRow[]>([]);
+  const [csvMessage, setCsvMessage] = useState<string | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(initialErrorMessage);
   const [isLoading, setIsLoading] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   const filteredPhrases = useMemo(() => {
     const normalizedKeyword = keyword.trim().toLowerCase();
@@ -93,13 +209,18 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
     return phrases
       .filter((phrase) => filterScene === "all" || phrase.scene === filterScene)
       .filter((phrase) => filterLevel === "all" || phrase.level === filterLevel)
+      .filter(
+        (phrase) =>
+          filterPronunciationDifficulty === "all" ||
+          phrase.pronunciation_difficulty === filterPronunciationDifficulty,
+      )
       .filter((phrase) => {
         if (!normalizedKeyword) {
           return true;
         }
 
-        return [phrase.japanese, phrase.english, phrase.hint].some((value) =>
-          value.toLowerCase().includes(normalizedKeyword),
+        return [phrase.japanese, phrase.english, phrase.hint, phrase.grammar_tags.join(" ")].some(
+          (value) => value.toLowerCase().includes(normalizedKeyword),
         );
       })
       .sort((a, b) => {
@@ -110,7 +231,7 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
 
         return a.japanese.localeCompare(b.japanese, "ja");
       });
-  }, [filterLevel, filterScene, keyword, phrases]);
+  }, [filterLevel, filterPronunciationDifficulty, filterScene, keyword, phrases]);
 
   function getSupabaseErrorMessage(error: { code?: string; message: string }, action: string): string {
     if (error.code === "23505") {
@@ -124,7 +245,9 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
       .from("english_phrases")
-      .select("id, scene, japanese, english, hint, level, created_at")
+      .select(
+        "id, scene, japanese, english, hint, level, pronunciation_difficulty, grammar_tags, created_at",
+      )
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -136,6 +259,175 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
     setMessage(successMessage);
   }
 
+  function buildCsvPreview(rows: string[][]): CsvPreviewRow[] {
+    const [headers, ...bodyRows] = rows;
+
+    if (!headers) {
+      throw new Error("CSVにヘッダー行がありません。");
+    }
+
+    const normalizedHeaders = headers.map((header) => header.trim());
+    const requiredHeaders = ["scene", "japanese", "english", "level"];
+    const missingHeaders = requiredHeaders.filter((header) => !normalizedHeaders.includes(header));
+
+    if (missingHeaders.length > 0) {
+      throw new Error(`CSVに必須列がありません: ${missingHeaders.join(", ")}`);
+    }
+
+    const headerIndex = new Map(normalizedHeaders.map((header, index) => [header, index]));
+    const existingKeys = new Set(phrases.map((phrase) => getPhraseKey(phrase)));
+    const csvKeys = new Set<string>();
+
+    return bodyRows.map((row, index): CsvPreviewRow => {
+      const getValue = (header: string): string => {
+        const columnIndex = headerIndex.get(header);
+        return columnIndex === undefined ? "" : row[columnIndex]?.trim() ?? "";
+      };
+
+      const scene = getValue("scene");
+      const japanese = getValue("japanese");
+      const english = getValue("english");
+      const level = getValue("level");
+      const pronunciationValue = getValue("pronunciation_difficulty") || "easy";
+      const payload: PhrasePayload = {
+        scene,
+        japanese,
+        english,
+        hint: getValue("hint"),
+        level: isPhraseLevel(level) ? level : "beginner",
+        pronunciation_difficulty: isPronunciationDifficulty(pronunciationValue)
+          ? pronunciationValue
+          : "easy",
+        grammar_tags: parseGrammarTags(getValue("grammar_tags"), "|"),
+      };
+      const rowNumber = index + 2;
+
+      if (!scene || !japanese || !english || !level) {
+        return {
+          rowNumber,
+          payload,
+          status: "error",
+          message: "必須項目が不足しています。",
+        };
+      }
+
+      if (!isPhraseLevel(level)) {
+        return {
+          rowNumber,
+          payload,
+          status: "error",
+          message: "levelの値が不正です。",
+        };
+      }
+
+      if (!isPronunciationDifficulty(pronunciationValue)) {
+        return {
+          rowNumber,
+          payload,
+          status: "error",
+          message: "pronunciation_difficultyの値が不正です。",
+        };
+      }
+
+      const key = getPhraseKey(payload);
+
+      if (existingKeys.has(key) || csvKeys.has(key)) {
+        csvKeys.add(key);
+        return {
+          rowNumber,
+          payload,
+          status: "skip",
+          message: "同じ教材が既に登録されています。",
+        };
+      }
+
+      csvKeys.add(key);
+      return {
+        rowNumber,
+        payload,
+        status: "ready",
+        message: "登録予定",
+      };
+    });
+  }
+
+  async function handleCsvFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    setImportResult(null);
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const rows = parseCsv(text);
+      const previewRows = buildCsvPreview(rows);
+      setCsvRows(previewRows);
+      setCsvMessage(`CSVを読み込みました。${previewRows.length}件をプレビューしています。`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "CSVの読み込みに失敗しました。";
+      setCsvRows([]);
+      setCsvMessage(errorMessage);
+    }
+  }
+
+  async function importCsvRows() {
+    const readyRows = csvRows.filter((row) => row.status === "ready");
+    const skipCount = csvRows.filter((row) => row.status === "skip").length;
+    const validationFailureCount = csvRows.filter((row) => row.status === "error").length;
+
+    if (readyRows.length === 0) {
+      setImportResult({
+        successCount: 0,
+        skipCount,
+        failureCount: validationFailureCount,
+      });
+      setCsvMessage("登録できる行がありません。");
+      return;
+    }
+
+    setIsImporting(true);
+    setCsvMessage(null);
+
+    try {
+      const supabase = createSupabaseClient();
+      const { data, error } = await supabase
+        .from("english_phrases")
+        .insert(readyRows.map((row) => row.payload))
+        .select("id");
+
+      if (error) {
+        setImportResult({
+          successCount: 0,
+          skipCount,
+          failureCount: validationFailureCount + readyRows.length,
+        });
+        setCsvMessage(`CSVインポートに失敗しました: ${error.message}`);
+        return;
+      }
+
+      const successCount = data.length;
+      setImportResult({
+        successCount,
+        skipCount,
+        failureCount: validationFailureCount + Math.max(0, readyRows.length - successCount),
+      });
+      setCsvRows([]);
+      await refreshPhrases("CSVインポートが完了しました。");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "不明なエラーです。";
+      setImportResult({
+        successCount: 0,
+        skipCount,
+        failureCount: validationFailureCount + readyRows.length,
+      });
+      setCsvMessage(`CSVインポートに失敗しました: ${errorMessage}`);
+    } finally {
+      setIsImporting(false);
+    }
+  }
+
   async function submitPhrase() {
     const validationError = validateForm(form);
 
@@ -144,12 +436,14 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
       return;
     }
 
-    const payload: PhraseForm = {
+    const payload: PhrasePayload = {
       scene: form.scene,
       japanese: form.japanese.trim(),
       english: form.english.trim(),
       hint: form.hint.trim(),
       level: form.level,
+      pronunciation_difficulty: form.pronunciation_difficulty,
+      grammar_tags: parseGrammarTags(form.grammarTagsInput, ","),
     };
 
     const duplicatePhrase = phrases.find(
@@ -281,6 +575,27 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
         </div>
 
         <div className="field formGap">
+          <label htmlFor="pronunciation-difficulty">発音難易度</label>
+          <select
+            className="select"
+            id="pronunciation-difficulty"
+            value={form.pronunciation_difficulty}
+            onChange={(event) =>
+              setForm((current) => ({
+                ...current,
+                pronunciation_difficulty: event.target.value as PronunciationDifficulty,
+              }))
+            }
+          >
+            {pronunciationDifficultyOptions.map((difficulty) => (
+              <option key={difficulty} value={difficulty}>
+                {difficulty}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="field formGap">
           <label htmlFor="japanese">日本語フレーズ</label>
           <textarea
             className="textarea"
@@ -314,6 +629,19 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
           />
         </div>
 
+        <div className="field formGap">
+          <label htmlFor="grammar-tags">文法タグ</label>
+          <input
+            className="input"
+            id="grammar-tags"
+            value={form.grammarTagsInput}
+            onChange={(event) =>
+              setForm((current) => ({ ...current, grammarTagsInput: event.target.value }))
+            }
+            placeholder="present-simple,question,ordering"
+          />
+        </div>
+
         <div className="buttonRow formGap">
           <button className="button" type="button" onClick={submitPhrase} disabled={isLoading}>
             {editingId ? "更新する" : "追加する"}
@@ -331,6 +659,90 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
         </div>
 
         {message ? <p className="metaText">{message}</p> : null}
+      </section>
+
+      <section className="panel" aria-label="CSVインポート">
+        <h2 className="sectionTitle">CSVインポート</h2>
+        <div className="field">
+          <label htmlFor="csv-file">CSVファイル</label>
+          <input
+            className="input"
+            id="csv-file"
+            type="file"
+            accept=".csv,text/csv"
+            onChange={handleCsvFileChange}
+          />
+        </div>
+        <p className="metaText">
+          必須列: scene, japanese, english, level / 任意列: hint, pronunciation_difficulty,
+          grammar_tags
+        </p>
+        {csvMessage ? <p className="metaText">{csvMessage}</p> : null}
+        {importResult ? (
+          <p className="metaText">
+            成功: {importResult.successCount} / スキップ: {importResult.skipCount} / 失敗:{" "}
+            {importResult.failureCount}
+          </p>
+        ) : null}
+        {csvRows.length > 0 ? (
+          <>
+            <div className="buttonRow formGap">
+              <button
+                className="button"
+                type="button"
+                onClick={importCsvRows}
+                disabled={isImporting || csvRows.every((row) => row.status !== "ready")}
+              >
+                {isImporting ? "インポート中" : "インポート実行"}
+              </button>
+              <button
+                className="button buttonSecondary"
+                type="button"
+                onClick={() => {
+                  setCsvRows([]);
+                  setCsvMessage(null);
+                  setImportResult(null);
+                }}
+                disabled={isImporting}
+              >
+                クリア
+              </button>
+            </div>
+            <div className="tableWrap formGap">
+              <table className="historyTable">
+                <thead>
+                  <tr>
+                    <th>行</th>
+                    <th>状態</th>
+                    <th>シーン</th>
+                    <th>レベル</th>
+                    <th>日本語</th>
+                    <th>英語</th>
+                    <th>発音</th>
+                    <th>文法タグ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {csvRows.slice(0, 50).map((row) => (
+                    <tr key={row.rowNumber}>
+                      <td>{row.rowNumber}</td>
+                      <td>{row.message}</td>
+                      <td>{row.payload.scene}</td>
+                      <td>{row.payload.level}</td>
+                      <td>{row.payload.japanese}</td>
+                      <td>{row.payload.english}</td>
+                      <td>{row.payload.pronunciation_difficulty}</td>
+                      <td>{row.payload.grammar_tags.join(", ")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {csvRows.length > 50 ? (
+              <p className="metaText">プレビューは先頭50件のみ表示しています。</p>
+            ) : null}
+          </>
+        ) : null}
       </section>
 
       <section className="panel" aria-label="教材一覧">
@@ -377,6 +789,24 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
               placeholder="日本語 / 英語 / ヒント"
             />
           </div>
+          <div className="field">
+            <label htmlFor="filter-pronunciation">発音難易度</label>
+            <select
+              className="select"
+              id="filter-pronunciation"
+              value={filterPronunciationDifficulty}
+              onChange={(event) =>
+                setFilterPronunciationDifficulty(event.target.value as "all" | PronunciationDifficulty)
+              }
+            >
+              <option value="all">すべて</option>
+              {pronunciationDifficultyOptions.map((difficulty) => (
+                <option key={difficulty} value={difficulty}>
+                  {difficulty}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <p className="metaText">
@@ -392,9 +822,11 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
                 <tr>
                   <th>シーン</th>
                   <th>レベル</th>
+                  <th>発音難易度</th>
                   <th>日本語</th>
                   <th>英語</th>
                   <th>ヒント</th>
+                  <th>文法タグ</th>
                   <th>作成日時</th>
                   <th>操作</th>
                 </tr>
@@ -404,9 +836,19 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
                   <tr key={phrase.id}>
                     <td>{phrase.scene}</td>
                     <td>{phrase.level}</td>
+                    <td>{phrase.pronunciation_difficulty}</td>
                     <td>{phrase.japanese}</td>
                     <td>{phrase.english}</td>
                     <td>{phrase.hint}</td>
+                    <td>
+                      <div className="tagList">
+                        {phrase.grammar_tags.map((tag) => (
+                          <span className="tagPill" key={tag}>
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
                     <td>{formatDate(phrase.created_at)}</td>
                     <td>
                       <div className="buttonRow compactActions">
