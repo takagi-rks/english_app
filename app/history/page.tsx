@@ -11,7 +11,7 @@ async function getPracticeLogs(): Promise<{
     const { data, error } = await supabase
       .from("english_practice_logs")
       .select(
-        "id, phrase_id, scene, japanese, correct_english, user_answer, score, created_at",
+        "id, phrase_id, scene, japanese, correct_english, user_answer, score, is_correct, created_at",
       )
       .order("created_at", { ascending: false })
       .limit(100);
@@ -67,6 +67,7 @@ export default async function HistoryPage() {
                 <th>回答</th>
                 <th>正解</th>
                 <th>点数</th>
+                <th>判定</th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +79,7 @@ export default async function HistoryPage() {
                   <td>{log.user_answer}</td>
                   <td>{log.correct_english}</td>
                   <td>{log.score}</td>
+                  <td>{log.is_correct ? "正解" : "復習"}</td>
                 </tr>
               ))}
             </tbody>

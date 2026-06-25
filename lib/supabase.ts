@@ -16,6 +16,7 @@ export type PracticeLog = {
   correct_english: string;
   user_answer: string;
   score: number;
+  is_correct: boolean;
   created_at: string;
 };
 

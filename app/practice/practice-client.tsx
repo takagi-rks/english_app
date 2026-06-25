@@ -121,6 +121,7 @@ export function PracticeClient({
         correct_english: selectedPhrase.english,
         user_answer: nextResult.userAnswer,
         score: nextResult.score,
+        is_correct: nextResult.score >= 80,
       });
 
       if (error) {
