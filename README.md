@@ -19,6 +19,8 @@ create table english_phrases (
   scene text not null,
   japanese text not null,
   english text not null,
+  hint text not null default '',
+  level text not null default 'beginner' check (level in ('beginner', 'intermediate', 'advanced')),
   created_at timestamptz not null default now()
 );
 
@@ -30,8 +32,7 @@ create table english_practice_logs (
   correct_english text not null,
   user_answer text not null,
   score integer not null check (score >= 0 and score <= 100),
-  is_correct boolean not null default false,
-  created_at timestamptz not null default now()
+  is_correct boolean not null default false
 );
 ```
 
@@ -52,16 +53,33 @@ alter table english_practice_logs
   add column if not exists is_correct boolean not null default false;
 ```
 
+For an existing project that already has `english_phrases`, apply this migration to support browser-based phrase management.
+
+```sql
+alter table english_phrases
+  add column if not exists hint text not null default '';
+
+alter table english_phrases
+  add column if not exists level text not null default 'beginner';
+
+alter table english_phrases
+  drop constraint if exists english_phrases_level_check;
+
+alter table english_phrases
+  add constraint english_phrases_level_check
+  check (level in ('beginner', 'intermediate', 'advanced'));
+```
+
 ## Seed Phrases
 
 ```sql
-insert into english_phrases (scene, japanese, english) values
-  ('カフェ', 'コーヒーを一杯ください。', 'Could I have a cup of coffee?'),
-  ('カフェ', 'ここで飲みます。', 'For here, please.'),
-  ('買い物', 'これはいくらですか？', 'How much is this?'),
-  ('買い物', '試着してもいいですか？', 'Can I try this on?'),
-  ('道案内', '駅にはどう行けばいいですか？', 'How can I get to the station?'),
-  ('道案内', 'もう一度言っていただけますか？', 'Could you say that again?'),
-  ('ホテル', 'チェックインをお願いします。', 'I would like to check in.'),
-  ('ホテル', '荷物を預かってもらえますか？', 'Could you keep my luggage?');
+insert into english_phrases (scene, japanese, english, hint, level) values
+  ('cafe', 'コーヒーを一杯ください。', 'Could I have a cup of coffee?', '注文するときの丁寧な言い方です。', 'beginner'),
+  ('cafe', 'ここで飲みます。', 'For here, please.', '店内利用を伝えます。', 'beginner'),
+  ('shopping', 'これはいくらですか？', 'How much is this?', '値段をたずねます。', 'beginner'),
+  ('shopping', '試着してもいいですか？', 'Can I try this on?', '服を試したいときに使います。', 'intermediate'),
+  ('directions', '駅にはどう行けばいいですか？', 'How can I get to the station?', '目的地までの行き方を聞きます。', 'beginner'),
+  ('directions', 'もう一度言っていただけますか？', 'Could you say that again?', '聞き返すときの丁寧な表現です。', 'beginner'),
+  ('greeting', 'お会いできてうれしいです。', 'Nice to meet you.', '初対面のあいさつです。', 'beginner'),
+  ('smalltalk', '週末はどうでしたか？', 'How was your weekend?', '軽い雑談を始める表現です。', 'intermediate');
 ```

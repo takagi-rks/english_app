@@ -194,6 +194,20 @@ a:focus-visible {
   background: var(--accent);
 }
 
+.buttonSmall {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.compactActions {
+  min-width: 116px;
+}
+
+.formGap {
+  margin-top: 16px;
+}
+
 .phraseBox {
   display: grid;
   gap: 10px;

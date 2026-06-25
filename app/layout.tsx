@@ -22,6 +22,7 @@ export default function RootLayout({
           <nav className="navLinks" aria-label="メインナビゲーション">
             <Link href="/practice">練習</Link>
             <Link href="/history">履歴</Link>
+            <Link href="/phrases">教材管理</Link>
           </nav>
         </header>
         <main>{children}</main>

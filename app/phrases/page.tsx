@@ -1,4 +1,4 @@
-import { PracticeClient } from "./practice-client";
+import { PhrasesClient } from "./phrases-client";
 import { createSupabaseClient, type Phrase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -12,8 +12,7 @@ async function getPhrases(): Promise<{
     const { data, error } = await supabase
       .from("english_phrases")
       .select("id, scene, japanese, english, hint, level, created_at")
-      .order("scene", { ascending: true })
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: false });
 
     if (error) {
       return {
@@ -32,18 +31,16 @@ async function getPhrases(): Promise<{
   }
 }
 
-export default async function PracticePage() {
+export default async function PhrasesPage() {
   const { phrases, errorMessage } = await getPhrases();
 
   return (
     <section className="page">
       <div className="pageHeader">
-        <h1>フレーズ練習</h1>
-        <p>
-          シーンを選び、日本語フレーズを英語で回答してください。回答後に採点し、正解英文を表示します。
-        </p>
+        <h1>教材管理</h1>
+        <p>ブラウザから英会話フレーズ教材を追加、編集、削除できます。</p>
       </div>
-      <PracticeClient initialPhrases={phrases} initialErrorMessage={errorMessage} />
+      <PhrasesClient initialPhrases={phrases} initialErrorMessage={errorMessage} />
     </section>
   );
 }

@@ -5,8 +5,12 @@ export type Phrase = {
   scene: string;
   japanese: string;
   english: string;
+  hint: string;
+  level: PhraseLevel;
   created_at?: string;
 };
+
+export type PhraseLevel = "beginner" | "intermediate" | "advanced";
 
 export type PracticeLog = {
   id: string;
@@ -17,10 +21,9 @@ export type PracticeLog = {
   user_answer: string;
   score: number;
   is_correct: boolean;
-  created_at: string;
 };
 
-type InsertPracticeLog = Omit<PracticeLog, "id" | "created_at">;
+type InsertPracticeLog = Omit<PracticeLog, "id">;
 
 export type Database = {
   public: {

@@ -11,9 +11,8 @@ async function getPracticeLogs(): Promise<{
     const { data, error } = await supabase
       .from("english_practice_logs")
       .select(
-        "id, phrase_id, scene, japanese, correct_english, user_answer, score, is_correct, created_at",
+        "id, phrase_id, scene, japanese, correct_english, user_answer, score, is_correct",
       )
-      .order("created_at", { ascending: false })
       .limit(100);
 
     if (error) {
@@ -31,13 +30,6 @@ async function getPracticeLogs(): Promise<{
       errorMessage: `履歴の取得に失敗しました: ${message}`,
     };
   }
-}
-
-function formatDate(value: string): string {
-  return new Intl.DateTimeFormat("ja-JP", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
 }
 
 export default async function HistoryPage() {
@@ -61,7 +53,6 @@ export default async function HistoryPage() {
           <table className="historyTable">
             <thead>
               <tr>
-                <th>日時</th>
                 <th>シーン</th>
                 <th>日本語</th>
                 <th>回答</th>
@@ -73,7 +64,6 @@ export default async function HistoryPage() {
             <tbody>
               {logs.map((log) => (
                 <tr key={log.id}>
-                  <td>{formatDate(log.created_at)}</td>
                   <td>{log.scene}</td>
                   <td>{log.japanese}</td>
                   <td>{log.user_answer}</td>
