@@ -32,7 +32,8 @@ create table english_practice_logs (
   correct_english text not null,
   user_answer text not null,
   score integer not null check (score >= 0 and score <= 100),
-  is_correct boolean not null default false
+  is_correct boolean not null default false,
+  practiced_at timestamptz not null default now()
 );
 ```
 
@@ -51,6 +52,9 @@ alter table english_practice_logs
 
 alter table english_practice_logs
   add column if not exists is_correct boolean not null default false;
+
+alter table english_practice_logs
+  add column if not exists practiced_at timestamptz not null default now();
 ```
 
 For an existing project that already has `english_phrases`, apply this migration to support browser-based phrase management.

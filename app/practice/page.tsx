@@ -3,6 +3,12 @@ import { createSupabaseClient, type Phrase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
+type PracticePageProps = {
+  searchParams?: Promise<{
+    phraseId?: string;
+  }>;
+};
+
 async function getPhrases(): Promise<{
   phrases: Phrase[];
   errorMessage: string | null;
@@ -32,8 +38,9 @@ async function getPhrases(): Promise<{
   }
 }
 
-export default async function PracticePage() {
+export default async function PracticePage({ searchParams }: PracticePageProps) {
   const { phrases, errorMessage } = await getPhrases();
+  const resolvedSearchParams = await searchParams;
 
   return (
     <section className="page">
@@ -43,7 +50,11 @@ export default async function PracticePage() {
           シーンを選び、日本語フレーズを英語で回答してください。回答後に採点し、正解英文を表示します。
         </p>
       </div>
-      <PracticeClient initialPhrases={phrases} initialErrorMessage={errorMessage} />
+      <PracticeClient
+        initialPhrases={phrases}
+        initialErrorMessage={errorMessage}
+        initialPhraseId={resolvedSearchParams?.phraseId}
+      />
     </section>
   );
 }

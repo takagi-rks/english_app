@@ -12,6 +12,7 @@ type PracticeResult = ScoreBreakdown & {
 type PracticeClientProps = {
   initialPhrases: Phrase[];
   initialErrorMessage: string | null;
+  initialPhraseId?: string;
 };
 
 function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | null {
@@ -31,9 +32,15 @@ function getScenes(phrases: Phrase[]): string[] {
 export function PracticeClient({
   initialPhrases,
   initialErrorMessage,
+  initialPhraseId,
 }: PracticeClientProps) {
-  const [selectedScene, setSelectedScene] = useState<string>(() => getScenes(initialPhrases)[0] ?? "");
-  const [selectedPhraseId, setSelectedPhraseId] = useState<string>(() => initialPhrases[0]?.id ?? "");
+  const initialPhrase = initialPhrases.find((phrase) => phrase.id === initialPhraseId);
+  const [selectedScene, setSelectedScene] = useState<string>(
+    () => initialPhrase?.scene ?? getScenes(initialPhrases)[0] ?? "",
+  );
+  const [selectedPhraseId, setSelectedPhraseId] = useState<string>(
+    () => initialPhrase?.id ?? initialPhrases[0]?.id ?? "",
+  );
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<PracticeResult | null>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
@@ -122,6 +129,7 @@ export function PracticeClient({
         user_answer: nextResult.userAnswer,
         score: nextResult.score,
         is_correct: nextResult.score >= 80,
+        practiced_at: new Date().toISOString(),
       });
 
       if (error) {

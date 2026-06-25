@@ -21,6 +21,7 @@ export type PracticeLog = {
   user_answer: string;
   score: number;
   is_correct: boolean;
+  practiced_at: string;
 };
 
 type InsertPracticeLog = Omit<PracticeLog, "id">;
