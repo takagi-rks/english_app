@@ -234,6 +234,75 @@ a:focus-visible {
   font-weight: 700;
 }
 
+.phraseCardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.phraseCard {
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fbfbf9;
+}
+
+.phraseCardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.phraseCardMeta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #eef1ed;
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.phraseCardBody {
+  display: grid;
+  gap: 12px;
+}
+
+.phraseCardLabel {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.phraseCardText {
+  margin: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.6;
+}
+
+.phraseCardJapanese {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.phraseCardFooter {
+  display: grid;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
 .phraseBox {
   display: grid;
   gap: 10px;
@@ -442,41 +511,19 @@ a:focus-visible {
 
 .calendarGrid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
+  width: min(100%, 238px);
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
 }
 
 .calendarCell {
   position: relative;
-  display: flex;
-  min-height: 76px;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 4px;
-  padding: 8px;
-  border-radius: 6px;
+  aspect-ratio: 1;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 4px;
   border: 1px solid var(--border);
   color: var(--muted);
-  font-size: 12px;
-}
-
-.calendarDate {
-  color: var(--text);
-  font-weight: 700;
-  line-height: 1;
-}
-
-.calendarCount {
-  color: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.calendarWeekday {
-  color: inherit;
-  font-size: 11px;
-  line-height: 1;
 }
 
 .calendarToday {
@@ -486,15 +533,17 @@ a:focus-visible {
 
 .calendarTodayLabel {
   position: absolute;
-  right: 5px;
-  top: 5px;
+  left: 50%;
+  top: calc(100% + 3px);
+  transform: translateX(-50%);
   border-radius: 4px;
   background: var(--accent);
   color: #fff;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   line-height: 1;
-  padding: 3px 5px;
+  padding: 2px 4px;
+  white-space: nowrap;
 }
 
 .calendarLevel0 {
@@ -516,18 +565,13 @@ a:focus-visible {
   color: #fff;
 }
 
-.calendarLevel2 .calendarDate,
-.calendarLevel3 .calendarDate {
-  color: inherit;
-}
-
 .calendarLegend {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 16px;
-  margin-top: 14px;
+  gap: 8px 14px;
+  margin-top: 16px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .legendItem {
@@ -538,10 +582,16 @@ a:focus-visible {
 
 .legendSwatch {
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: 13px;
+  height: 13px;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
+}
+
+@media (max-width: 1100px) {
+  .phraseCardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -568,6 +618,7 @@ a:focus-visible {
   .metricGrid,
   .chartRow,
   .filterGrid,
+  .phraseCardGrid,
   .badgeGrid {
     grid-template-columns: 1fr;
   }
@@ -606,29 +657,16 @@ a:focus-visible {
   }
 
   .calendarGrid {
-    gap: 5px;
+    width: min(100%, 210px);
+    gap: 4px;
   }
 
   .calendarCell {
-    min-height: 62px;
-    padding: 6px 4px;
-  }
-
-  .calendarDate {
-    font-size: 11px;
-  }
-
-  .calendarCount {
-    font-size: 11px;
-  }
-
-  .calendarWeekday {
-    font-size: 10px;
+    border-radius: 3px;
   }
 
   .calendarTodayLabel {
-    position: static;
-    align-self: flex-start;
+    top: calc(100% + 2px);
     padding: 2px 4px;
   }
 

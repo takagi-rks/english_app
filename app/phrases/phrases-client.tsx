@@ -810,31 +810,31 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
         {filteredPhrases.length === 0 ? (
           <div className="emptyState">条件に一致する教材がありません。</div>
         ) : (
-          <div className="tableWrap">
-            <table className="historyTable">
-              <thead>
-                <tr>
-                  <th>シーン</th>
-                  <th>レベル</th>
-                  <th>発音難易度</th>
-                  <th>日本語</th>
-                  <th>英語</th>
-                  <th>ヒント</th>
-                  <th>文法タグ</th>
-                  <th>作成日時</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredPhrases.map((phrase) => (
-                  <tr key={phrase.id}>
-                    <td>{getSceneLabel(phrase.scene)}</td>
-                    <td>{getLevelLabel(phrase.level)}</td>
-                    <td>{getPronunciationDifficultyLabel(phrase.pronunciation_difficulty)}</td>
-                    <td>{phrase.japanese}</td>
-                    <td>{phrase.english}</td>
-                    <td>{phrase.hint}</td>
-                    <td>
+          <div className="phraseCardGrid">
+            {filteredPhrases.map((phrase) => (
+              <article className="phraseCard" key={phrase.id}>
+                <div className="phraseCardMeta">
+                  <span>{getSceneLabel(phrase.scene)}</span>
+                  <span>{getLevelLabel(phrase.level)}</span>
+                  <span>{getPronunciationDifficultyLabel(phrase.pronunciation_difficulty)}</span>
+                </div>
+
+                <div className="phraseCardBody">
+                  <div>
+                    <span className="phraseCardLabel">日本語</span>
+                    <p className="phraseCardText phraseCardJapanese">{phrase.japanese}</p>
+                  </div>
+                  <div>
+                    <span className="phraseCardLabel">英語</span>
+                    <p className="phraseCardText">{phrase.english}</p>
+                  </div>
+                  <div>
+                    <span className="phraseCardLabel">ヒント</span>
+                    <p className="phraseCardText">{phrase.hint || "なし"}</p>
+                  </div>
+                  <div>
+                    <span className="phraseCardLabel">文法タグ</span>
+                    {phrase.grammar_tags.length > 0 ? (
                       <div className="tagList">
                         {phrase.grammar_tags.map((tag) => (
                           <span className="tagPill" key={tag}>
@@ -842,32 +842,35 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
                           </span>
                         ))}
                       </div>
-                    </td>
-                    <td>{formatDate(phrase.created_at)}</td>
-                    <td>
-                      <div className="buttonRow compactActions">
-                        <button
-                          className="button buttonSecondary buttonSmall"
-                          type="button"
-                          onClick={() => startEditing(phrase)}
-                          disabled={isLoading}
-                        >
-                          編集
-                        </button>
-                        <button
-                          className="button buttonDanger buttonSmall"
-                          type="button"
-                          onClick={() => deletePhrase(phrase)}
-                          disabled={isLoading}
-                        >
-                          削除
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    ) : (
+                      <p className="phraseCardText">なし</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="phraseCardFooter">
+                  <span className="metaText">作成日時: {formatDate(phrase.created_at)}</span>
+                  <div className="buttonRow compactActions">
+                    <button
+                      className="button buttonSecondary buttonSmall"
+                      type="button"
+                      onClick={() => startEditing(phrase)}
+                      disabled={isLoading}
+                    >
+                      編集
+                    </button>
+                    <button
+                      className="button buttonDanger buttonSmall"
+                      type="button"
+                      onClick={() => deletePhrase(phrase)}
+                      disabled={isLoading}
+                    >
+                      削除
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         )}
       </section>

@@ -132,21 +132,6 @@ function getCalendarClassName(day: CalendarDay, todayKey: string): string {
   return `calendarCell calendarLevel${day.intensity}${todayClass}`;
 }
 
-function formatCalendarDate(dateKey: string): string {
-  const [, month, day] = dateKey.split("-");
-
-  return `${Number(month)}/${Number(day)}`;
-}
-
-function formatCalendarWeekday(dateKey: string): string {
-  const date = new Date(`${dateKey}T00:00:00+09:00`);
-
-  return new Intl.DateTimeFormat("ja-JP", {
-    timeZone: "Asia/Tokyo",
-    weekday: "short",
-  }).format(date);
-}
-
 function Bar({ value }: { value: number }) {
   return (
     <div className="barTrack" aria-label={`${value}%`}>
@@ -192,11 +177,9 @@ export default async function StatsPage() {
             <div
               className={getCalendarClassName(day, todayKey)}
               key={day.dateKey}
+              aria-label={`${day.dateKey}: ${day.answerCount}件`}
               title={`${day.dateKey}: ${day.answerCount}件`}
             >
-              <span className="calendarDate">{formatCalendarDate(day.dateKey)}</span>
-              <span className="calendarCount">{day.answerCount}件</span>
-              <span className="calendarWeekday">{formatCalendarWeekday(day.dateKey)}</span>
               {day.dateKey === todayKey ? <span className="calendarTodayLabel">今日</span> : null}
             </div>
           ))}
