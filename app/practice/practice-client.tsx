@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { evaluatePronunciation, type PronunciationEvaluation } from "@/lib/learning";
 import { scoreAnswer, type ScoreBreakdown } from "@/lib/scoring";
 import { createSupabaseClient, type Phrase } from "@/lib/supabase";
 
@@ -13,6 +14,11 @@ type PracticeClientProps = {
   initialPhrases: Phrase[];
   initialErrorMessage: string | null;
   initialPhraseId?: string;
+};
+
+type PronunciationResult = PronunciationEvaluation & {
+  recognizedSpeech: string;
+  correctEnglish: string;
 };
 
 function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | null {
@@ -44,8 +50,10 @@ export function PracticeClient({
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<PracticeResult | null>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [pronunciationResult, setPronunciationResult] = useState<PronunciationResult | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isPronunciationListening, setIsPronunciationListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const scenes = useMemo(() => getScenes(initialPhrases), [initialPhrases]);
@@ -108,6 +116,92 @@ export function PracticeClient({
     recognitionRef.current = recognition;
     setIsListening(true);
     setSaveMessage(null);
+    recognition.start();
+  }
+
+  async function savePronunciationLog(nextResult: PronunciationResult) {
+    if (!selectedPhrase) {
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage(null);
+
+    try {
+      const fallbackScore = result?.score ?? nextResult.score;
+      const supabase = createSupabaseClient();
+      const { error } = await supabase.from("english_practice_logs").insert({
+        phrase_id: selectedPhrase.id,
+        scene: selectedPhrase.scene,
+        japanese: selectedPhrase.japanese,
+        correct_english: selectedPhrase.english,
+        user_answer: nextResult.recognizedSpeech,
+        score: fallbackScore,
+        is_correct: fallbackScore >= 80,
+        practiced_at: new Date().toISOString(),
+        pronunciation_score: nextResult.score,
+        recognized_speech: nextResult.recognizedSpeech,
+      });
+
+      if (error) {
+        setSaveMessage(`発音評価の保存に失敗しました: ${error.message}`);
+        return;
+      }
+
+      setSaveMessage("発音評価を保存しました。");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "不明なエラーです。";
+      setSaveMessage(`発音評価の保存に失敗しました: ${message}`);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  function startPronunciationEvaluation() {
+    if (!selectedPhrase) {
+      setSaveMessage("発音評価できるフレーズがありません。");
+      return;
+    }
+
+    const Recognition = getSpeechRecognitionConstructor();
+
+    if (!Recognition) {
+      setSaveMessage("このブラウザは発音評価に対応していません。");
+      return;
+    }
+
+    const recognition = new Recognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.onresult = (event) => {
+      const recognizedSpeech = Array.from({ length: event.results.length }, (_, index) =>
+        event.results[index][0]?.transcript ?? "",
+      )
+        .join(" ")
+        .trim();
+      const evaluation = evaluatePronunciation(recognizedSpeech, selectedPhrase.english);
+      const nextResult: PronunciationResult = {
+        ...evaluation,
+        recognizedSpeech,
+        correctEnglish: selectedPhrase.english,
+      };
+
+      setPronunciationResult(nextResult);
+      void savePronunciationLog(nextResult);
+    };
+    recognition.onerror = () => {
+      setSaveMessage("発音評価中にエラーが発生しました。もう一度試してください。");
+      setIsPronunciationListening(false);
+    };
+    recognition.onend = () => {
+      setIsPronunciationListening(false);
+    };
+
+    recognitionRef.current = recognition;
+    setPronunciationResult(null);
+    setSaveMessage(null);
+    setIsPronunciationListening(true);
     recognition.start();
   }
 
@@ -174,6 +268,7 @@ export function PracticeClient({
     setSelectedPhraseId(nextPhrase.id);
     setAnswer("");
     setResult(null);
+    setPronunciationResult(null);
     setSaveMessage(null);
   }
 
@@ -205,6 +300,7 @@ export function PracticeClient({
               setSelectedPhraseId(firstPhrase?.id ?? "");
               setAnswer("");
               setResult(null);
+              setPronunciationResult(null);
               setSaveMessage(null);
             }}
           >
@@ -225,6 +321,7 @@ export function PracticeClient({
               setSelectedPhraseId(event.target.value);
               setAnswer("");
               setResult(null);
+              setPronunciationResult(null);
               setSaveMessage(null);
             }}
           >
@@ -275,10 +372,22 @@ export function PracticeClient({
               <button className="button buttonSecondary" type="button" onClick={speakCorrectAnswer}>
                 正解を聞く
               </button>
+              <button
+                className="button buttonSecondary"
+                type="button"
+                onClick={startPronunciationEvaluation}
+                disabled={!recognitionSupported || isPronunciationListening || isSaving}
+              >
+                {isPronunciationListening ? "評価中" : "発音評価"}
+              </button>
               <button className="button buttonSecondary" type="button" onClick={moveToNextPhrase}>
                 次のフレーズ
               </button>
             </div>
+
+            {!recognitionSupported ? (
+              <p className="metaText">このブラウザは発音評価に対応していません。</p>
+            ) : null}
 
             {saveMessage ? <p className="metaText">{saveMessage}</p> : null}
 
@@ -295,6 +404,33 @@ export function PracticeClient({
                   <p>
                     <strong>正解:</strong> {result.correctEnglish}
                   </p>
+                </div>
+              </section>
+            ) : null}
+
+            {pronunciationResult ? (
+              <section className="panel sectionGap" aria-live="polite">
+                <h2 className="sectionTitle">発音評価</h2>
+                <div className="resultGrid">
+                  <div className="scoreCircle">{pronunciationResult.score}</div>
+                  <div className="answerBlock">
+                    <p>
+                      <strong>認識された英文:</strong> {pronunciationResult.recognizedSpeech || "認識できませんでした"}
+                    </p>
+                    <p>
+                      <strong>正解英文:</strong> {pronunciationResult.correctEnglish}
+                    </p>
+                    <p>
+                      <strong>単語一致率:</strong> {pronunciationResult.wordMatchRate}% /{" "}
+                      <strong>語順:</strong> {pronunciationResult.orderScore}%
+                    </p>
+                    <p>
+                      <strong>不一致単語:</strong>{" "}
+                      {pronunciationResult.mismatchedWords.length > 0
+                        ? pronunciationResult.mismatchedWords.join(", ")
+                        : "なし"}
+                    </p>
+                  </div>
                 </div>
               </section>
             ) : null}

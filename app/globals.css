@@ -399,6 +399,82 @@ a:focus-visible {
   background: var(--primary);
 }
 
+.progressTrack {
+  width: 100%;
+  height: 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e4e8e3;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+
+.badgeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.badgeBox {
+  display: grid;
+  gap: 6px;
+  min-height: 104px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #f2f3f0;
+  color: var(--muted);
+}
+
+.badgeBox strong {
+  color: var(--text);
+}
+
+.badgeAchieved {
+  background: #e9f3ef;
+  border-color: #b7d6cb;
+  color: var(--primary-dark);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(28px, 1fr));
+  gap: 6px;
+}
+
+.calendarCell {
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.calendarLevel0 {
+  background: #f0f1ee;
+}
+
+.calendarLevel1 {
+  background: #cfe5da;
+  color: var(--primary-dark);
+}
+
+.calendarLevel2 {
+  background: #75b79f;
+  color: #073f35;
+}
+
+.calendarLevel3 {
+  background: var(--primary);
+  color: #fff;
+}
+
 @media (max-width: 760px) {
   .siteHeader {
     align-items: flex-start;
@@ -422,8 +498,38 @@ a:focus-visible {
 
   .metricGrid,
   .chartRow,
-  .filterGrid {
+  .filterGrid,
+  .badgeGrid {
     grid-template-columns: 1fr;
+  }
+
+  .button {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .buttonRow {
+    width: 100%;
+  }
+
+  .buttonRow .button {
+    flex: 1 1 100%;
+  }
+
+  .tableWrap {
+    border: 0;
+    background: transparent;
+  }
+
+  .historyTable {
+    border-collapse: separate;
+    border-spacing: 0 12px;
+    min-width: 680px;
+  }
+
+  .historyTable th,
+  .historyTable td {
+    background: var(--surface);
   }
 
   .panel {

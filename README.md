@@ -36,7 +36,9 @@ create table english_practice_logs (
   user_answer text not null,
   score integer not null check (score >= 0 and score <= 100),
   is_correct boolean not null default false,
-  practiced_at timestamptz not null default now()
+  practiced_at timestamptz not null default now(),
+  pronunciation_score integer,
+  recognized_speech text
 );
 ```
 
@@ -58,6 +60,10 @@ alter table english_practice_logs
 
 alter table english_practice_logs
   add column if not exists practiced_at timestamptz not null default now();
+
+alter table english_practice_logs
+  add column if not exists pronunciation_score int,
+  add column if not exists recognized_speech text;
 ```
 
 For an existing project that already has `english_phrases`, apply this migration to support browser-based phrase management.
@@ -150,3 +156,46 @@ cafe,コーヒーをください。,"I'd like a coffee please.",注文,beginner,
 ```
 
 A 300-row starter CSV is available at `docs/sample-phrases.csv`.
+
+## Phase4 Features
+
+- Pronunciation evaluation on `/practice` uses the browser Web Speech API SpeechRecognition.
+- Learning calendar on `/stats` shows the last 35 days using `practiced_at` in Japan time.
+- Level and XP are shown on `/`.
+- Badges are computed from `english_practice_logs`; no badge table is required.
+- Mobile UI uses wrapping navigation, larger buttons, stacked forms, and scrollable/card-like tables.
+
+### Pronunciation Evaluation Notes
+
+Pronunciation evaluation does not use AI. It compares SpeechRecognition text with the correct English answer using:
+
+- text similarity
+- word match rate
+- word order match rate
+
+Web Speech API support depends on the browser. Unsupported browsers show a Japanese message and continue to work with text input.
+
+### XP Rules
+
+- Answer: +10 XP
+- Correct answer: +10 XP
+- Score 100: +20 XP
+- Pronunciation score 80 or higher: +10 XP
+
+Level is calculated as:
+
+```text
+level = floor(total_xp / 100) + 1
+```
+
+### Badge Conditions
+
+- First Step: first answer
+- 10 Questions: 10 total answers
+- 100 Questions: 100 total answers
+- Perfect Answer: at least one 100 score
+- Perfect 10: at least 10 correct answers
+- 3 Day Streak: 3 consecutive learning days
+- 7 Day Streak: 7 consecutive learning days
+- Pronunciation Starter: at least one pronunciation evaluation
+- Good Pronunciation: at least one pronunciation score of 80 or higher
