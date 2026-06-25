@@ -20,6 +20,8 @@ type ChallengeClientProps = {
 };
 
 export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClientProps) {
+  const [selectedScene, setSelectedScene] = useState("all");
+  const [challengePhrases, setChallengePhrases] = useState<Phrase[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [currentResult, setCurrentResult] = useState<ChallengeResult | null>(null);
@@ -27,8 +29,13 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
   const [message, setMessage] = useState<string | null>(initialErrorMessage);
   const [isSaving, setIsSaving] = useState(false);
 
-  const currentPhrase = phrases[currentIndex] ?? null;
-  const isFinished = phrases.length > 0 && results.length === phrases.length;
+  const sceneOptions = useMemo(
+    () => Array.from(new Set(phrases.map((phrase) => phrase.scene))).sort((a, b) => a.localeCompare(b, "ja")),
+    [phrases],
+  );
+  const currentPhrase = challengePhrases?.[currentIndex] ?? null;
+  const isFinished =
+    challengePhrases !== null && challengePhrases.length > 0 && results.length === challengePhrases.length;
   const summary = useMemo(() => {
     const correctCount = results.filter((result) => result.isCorrect).length;
 
@@ -39,6 +46,29 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
       accuracy: toPercent(correctCount, results.length),
     };
   }, [results]);
+
+  function shufflePhrases(targetPhrases: Phrase[]): Phrase[] {
+    const shuffled = [...targetPhrases];
+
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    }
+
+    return shuffled;
+  }
+
+  function startChallenge() {
+    const filteredPhrases =
+      selectedScene === "all" ? phrases : phrases.filter((phrase) => phrase.scene === selectedScene);
+
+    setChallengePhrases(shufflePhrases(filteredPhrases).slice(0, 10));
+    setCurrentIndex(0);
+    setAnswer("");
+    setCurrentResult(null);
+    setResults([]);
+    setMessage(null);
+  }
 
   async function submitAnswer() {
     if (!currentPhrase) {
@@ -102,6 +132,49 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
     return <div className="emptyState">チャレンジ用の教材が登録されていません。</div>;
   }
 
+  if (challengePhrases === null) {
+    const selectedCount =
+      selectedScene === "all"
+        ? phrases.length
+        : phrases.filter((phrase) => phrase.scene === selectedScene).length;
+
+    return (
+      <section className="panel">
+        <div className="field">
+          <label htmlFor="challenge-scene">カテゴリ</label>
+          <select
+            className="select"
+            id="challenge-scene"
+            value={selectedScene}
+            onChange={(event) => setSelectedScene(event.target.value)}
+          >
+            <option value="all">全カテゴリ</option>
+            {sceneOptions.map((scene) => (
+              <option key={scene} value={scene}>
+                {scene}
+              </option>
+            ))}
+          </select>
+        </div>
+        <p className="metaText">対象教材: {selectedCount}件 / 出題数: 最大10問</p>
+        <button className="button formGap" type="button" onClick={startChallenge} disabled={selectedCount === 0}>
+          チャレンジ開始
+        </button>
+      </section>
+    );
+  }
+
+  if (challengePhrases.length === 0) {
+    return (
+      <section className="panel">
+        <div className="emptyState">選択したカテゴリに教材がありません。</div>
+        <button className="button buttonSecondary formGap" type="button" onClick={() => setChallengePhrases(null)}>
+          カテゴリを選び直す
+        </button>
+      </section>
+    );
+  }
+
   if (isFinished) {
     return (
       <section className="panel">
@@ -124,6 +197,9 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
             <strong>{summary.accuracy}%</strong>
           </div>
         </div>
+        <button className="button buttonSecondary formGap" type="button" onClick={() => setChallengePhrases(null)}>
+          もう一度カテゴリを選ぶ
+        </button>
       </section>
     );
   }
@@ -131,7 +207,7 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
   return (
     <section className="panel">
       <p className="metaText">
-        {currentIndex + 1} / {phrases.length}
+        {currentIndex + 1} / {challengePhrases.length}
       </p>
       {currentPhrase ? (
         <>

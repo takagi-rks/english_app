@@ -3,17 +3,6 @@ import { createSupabaseClient, type Phrase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
-function shufflePhrases(phrases: Phrase[]): Phrase[] {
-  const shuffled = [...phrases];
-
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
-  }
-
-  return shuffled;
-}
-
 async function getChallengePhrases(): Promise<{
   phrases: Phrase[];
   errorMessage: string | null;
@@ -32,7 +21,7 @@ async function getChallengePhrases(): Promise<{
     }
 
     return {
-      phrases: shufflePhrases(data).slice(0, 10),
+      phrases: data,
       errorMessage: null,
     };
   } catch (error) {
