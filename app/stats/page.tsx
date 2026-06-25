@@ -126,8 +126,25 @@ async function getStats(): Promise<{
   }
 }
 
-function getCalendarClassName(day: CalendarDay): string {
-  return `calendarCell calendarLevel${day.intensity}`;
+function getCalendarClassName(day: CalendarDay, todayKey: string): string {
+  const todayClass = day.dateKey === todayKey ? " calendarToday" : "";
+
+  return `calendarCell calendarLevel${day.intensity}${todayClass}`;
+}
+
+function formatCalendarDate(dateKey: string): string {
+  const [, month, day] = dateKey.split("-");
+
+  return `${Number(month)}/${Number(day)}`;
+}
+
+function formatCalendarWeekday(dateKey: string): string {
+  const date = new Date(`${dateKey}T00:00:00+09:00`);
+
+  return new Intl.DateTimeFormat("ja-JP", {
+    timeZone: "Asia/Tokyo",
+    weekday: "short",
+  }).format(date);
 }
 
 function Bar({ value }: { value: number }) {
@@ -140,6 +157,7 @@ function Bar({ value }: { value: number }) {
 
 export default async function StatsPage() {
   const { stats, errorMessage } = await getStats();
+  const todayKey = getJstDateKey(new Date());
 
   return (
     <section className="page">
@@ -172,15 +190,35 @@ export default async function StatsPage() {
         <div className="calendarGrid" aria-label="過去35日分の学習カレンダー">
           {stats.calendarDays.map((day) => (
             <div
-              className={getCalendarClassName(day)}
+              className={getCalendarClassName(day, todayKey)}
               key={day.dateKey}
               title={`${day.dateKey}: ${day.answerCount}件`}
             >
-              <span>{day.answerCount}</span>
+              <span className="calendarDate">{formatCalendarDate(day.dateKey)}</span>
+              <span className="calendarCount">{day.answerCount}件</span>
+              <span className="calendarWeekday">{formatCalendarWeekday(day.dateKey)}</span>
+              {day.dateKey === todayKey ? <span className="calendarTodayLabel">今日</span> : null}
             </div>
           ))}
         </div>
-        <p className="metaText">薄い順に 0件 / 1〜4件 / 5〜9件 / 10件以上 を表します。</p>
+        <div className="calendarLegend" aria-label="学習量の凡例">
+          <span className="legendItem">
+            <span className="legendSwatch calendarLevel0" aria-hidden="true" />
+            0件
+          </span>
+          <span className="legendItem">
+            <span className="legendSwatch calendarLevel1" aria-hidden="true" />
+            1〜4件
+          </span>
+          <span className="legendItem">
+            <span className="legendSwatch calendarLevel2" aria-hidden="true" />
+            5〜9件
+          </span>
+          <span className="legendItem">
+            <span className="legendSwatch calendarLevel3" aria-hidden="true" />
+            10件以上
+          </span>
+        </div>
       </section>
 
       <section className="panel sectionGap">

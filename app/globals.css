@@ -442,18 +442,59 @@ a:focus-visible {
 
 .calendarGrid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(28px, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .calendarCell {
-  display: grid;
-  place-items: center;
-  min-height: 34px;
+  position: relative;
+  display: flex;
+  min-height: 76px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px;
   border-radius: 6px;
   border: 1px solid var(--border);
   color: var(--muted);
   font-size: 12px;
+}
+
+.calendarDate {
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.calendarCount {
+  color: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.calendarWeekday {
+  color: inherit;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.calendarToday {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(195, 72, 50, 0.18);
+}
+
+.calendarTodayLabel {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 5px;
 }
 
 .calendarLevel0 {
@@ -473,6 +514,34 @@ a:focus-visible {
 .calendarLevel3 {
   background: var(--primary);
   color: #fff;
+}
+
+.calendarLevel2 .calendarDate,
+.calendarLevel3 .calendarDate {
+  color: inherit;
+}
+
+.calendarLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendSwatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
 }
 
 @media (max-width: 760px) {
@@ -534,6 +603,33 @@ a:focus-visible {
 
   .panel {
     padding: 18px;
+  }
+
+  .calendarGrid {
+    gap: 5px;
+  }
+
+  .calendarCell {
+    min-height: 62px;
+    padding: 6px 4px;
+  }
+
+  .calendarDate {
+    font-size: 11px;
+  }
+
+  .calendarCount {
+    font-size: 11px;
+  }
+
+  .calendarWeekday {
+    font-size: 10px;
+  }
+
+  .calendarTodayLabel {
+    position: static;
+    align-self: flex-start;
+    padding: 2px 4px;
   }
 
   .scoreCircle {
