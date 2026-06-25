@@ -68,25 +68,57 @@ function validateForm(form: PhraseForm): string | null {
   return null;
 }
 
+function isSamePhrase(phrase: Phrase, form: PhraseForm): boolean {
+  return (
+    phrase.scene === form.scene &&
+    phrase.japanese.trim() === form.japanese.trim() &&
+    phrase.english.trim() === form.english.trim() &&
+    phrase.level === form.level
+  );
+}
+
 export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesClientProps) {
   const [phrases, setPhrases] = useState<Phrase[]>(initialPhrases);
   const [form, setForm] = useState<PhraseForm>(emptyForm);
+  const [filterScene, setFilterScene] = useState("all");
+  const [filterLevel, setFilterLevel] = useState<"all" | PhraseLevel>("all");
+  const [keyword, setKeyword] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(initialErrorMessage);
   const [isLoading, setIsLoading] = useState(false);
 
-  const sortedPhrases = useMemo(
-    () =>
-      [...phrases].sort((a, b) => {
+  const filteredPhrases = useMemo(() => {
+    const normalizedKeyword = keyword.trim().toLowerCase();
+
+    return phrases
+      .filter((phrase) => filterScene === "all" || phrase.scene === filterScene)
+      .filter((phrase) => filterLevel === "all" || phrase.level === filterLevel)
+      .filter((phrase) => {
+        if (!normalizedKeyword) {
+          return true;
+        }
+
+        return [phrase.japanese, phrase.english, phrase.hint].some((value) =>
+          value.toLowerCase().includes(normalizedKeyword),
+        );
+      })
+      .sort((a, b) => {
         const sceneCompare = a.scene.localeCompare(b.scene, "ja");
         if (sceneCompare !== 0) {
           return sceneCompare;
         }
 
         return a.japanese.localeCompare(b.japanese, "ja");
-      }),
-    [phrases],
-  );
+      });
+  }, [filterLevel, filterScene, keyword, phrases]);
+
+  function getSupabaseErrorMessage(error: { code?: string; message: string }, action: string): string {
+    if (error.code === "23505") {
+      return "同じ教材が既に登録されています。";
+    }
+
+    return `教材の${action}に失敗しました: ${error.message}`;
+  }
 
   async function refreshPhrases(successMessage: string) {
     const supabase = createSupabaseClient();
@@ -112,9 +144,6 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
       return;
     }
 
-    setIsLoading(true);
-    setMessage(null);
-
     const payload: PhraseForm = {
       scene: form.scene,
       japanese: form.japanese.trim(),
@@ -123,6 +152,18 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
       level: form.level,
     };
 
+    const duplicatePhrase = phrases.find(
+      (phrase) => phrase.id !== editingId && isSamePhrase(phrase, payload),
+    );
+
+    if (duplicatePhrase) {
+      setMessage("同じ教材が既に登録されています。");
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage(null);
+
     try {
       const supabase = createSupabaseClient();
 
@@ -130,7 +171,7 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
         const { error } = await supabase.from("english_phrases").update(payload).eq("id", editingId);
 
         if (error) {
-          setMessage(`教材の更新に失敗しました: ${error.message}`);
+          setMessage(getSupabaseErrorMessage(error, "更新"));
           return;
         }
 
@@ -143,7 +184,7 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
       const { error } = await supabase.from("english_phrases").insert(payload);
 
       if (error) {
-        setMessage(`教材の追加に失敗しました: ${error.message}`);
+        setMessage(getSupabaseErrorMessage(error, "追加"));
         return;
       }
 
@@ -293,8 +334,57 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
       </section>
 
       <section className="panel" aria-label="教材一覧">
-        {sortedPhrases.length === 0 ? (
-          <div className="emptyState">教材が登録されていません。</div>
+        <div className="filterGrid">
+          <div className="field">
+            <label htmlFor="filter-scene">シーンで絞り込み</label>
+            <select
+              className="select"
+              id="filter-scene"
+              value={filterScene}
+              onChange={(event) => setFilterScene(event.target.value)}
+            >
+              <option value="all">すべて</option>
+              {sceneOptions.map((scene) => (
+                <option key={scene} value={scene}>
+                  {scene}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="filter-level">レベルで絞り込み</label>
+            <select
+              className="select"
+              id="filter-level"
+              value={filterLevel}
+              onChange={(event) => setFilterLevel(event.target.value as "all" | PhraseLevel)}
+            >
+              <option value="all">すべて</option>
+              {levelOptions.map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="keyword">キーワード検索</label>
+            <input
+              className="input"
+              id="keyword"
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
+              placeholder="日本語 / 英語 / ヒント"
+            />
+          </div>
+        </div>
+
+        <p className="metaText">
+          表示件数: {filteredPhrases.length} / 登録件数: {phrases.length}
+        </p>
+
+        {filteredPhrases.length === 0 ? (
+          <div className="emptyState">条件に一致する教材がありません。</div>
         ) : (
           <div className="tableWrap">
             <table className="historyTable">
@@ -310,7 +400,7 @@ export function PhrasesClient({ initialPhrases, initialErrorMessage }: PhrasesCl
                 </tr>
               </thead>
               <tbody>
-                {sortedPhrases.map((phrase) => (
+                {filteredPhrases.map((phrase) => (
                   <tr key={phrase.id}>
                     <td>{phrase.scene}</td>
                     <td>{phrase.level}</td>

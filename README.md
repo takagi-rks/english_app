@@ -21,7 +21,8 @@ create table english_phrases (
   english text not null,
   hint text not null default '',
   level text not null default 'beginner' check (level in ('beginner', 'intermediate', 'advanced')),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  constraint english_phrases_unique_phrase unique (scene, japanese, english, level)
 );
 
 create table english_practice_logs (
@@ -72,6 +73,29 @@ alter table english_phrases
 alter table english_phrases
   add constraint english_phrases_level_check
   check (level in ('beginner', 'intermediate', 'advanced'));
+
+with duplicates as (
+  select
+    id,
+    row_number() over (
+      partition by scene, japanese, english, level
+      order by created_at asc nulls last, id asc
+    ) as duplicate_number
+  from english_phrases
+)
+delete from english_phrases
+where id in (
+  select id
+  from duplicates
+  where duplicate_number > 1
+);
+
+alter table english_phrases
+  drop constraint if exists english_phrases_unique_phrase;
+
+alter table english_phrases
+  add constraint english_phrases_unique_phrase
+  unique (scene, japanese, english, level);
 ```
 
 ## Seed Phrases
