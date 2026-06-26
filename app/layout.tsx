@@ -23,6 +23,8 @@ export default function RootLayout({
             <Link href="/practice">練習</Link>
             <Link href="/listening">リスニング</Link>
             <Link href="/shadowing">シャドーイング</Link>
+            <Link href="/toeic">TOEIC</Link>
+            <Link href="/toeic/questions">TOEIC問題管理</Link>
             <Link href="/challenge">10問チャレンジ</Link>
             <Link href="/weak-phrases">苦手復習</Link>
             <Link href="/stats">学習統計</Link>

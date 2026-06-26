@@ -42,6 +42,32 @@ create table english_practice_logs (
 );
 ```
 
+TOEIC mode uses separate tables from the phrase practice tables.
+
+```sql
+create table toeic_questions (
+  id uuid primary key default gen_random_uuid(),
+  part text not null check (part in ('part1', 'part2', 'part3', 'part4', 'part5', 'part6', 'part7')),
+  question_text text not null,
+  choices jsonb not null,
+  correct_choice text not null check (correct_choice in ('A', 'B', 'C', 'D')),
+  explanation text,
+  difficulty text not null default 'beginner' check (difficulty in ('beginner', 'intermediate', 'advanced')),
+  tags text[] not null default '{}',
+  created_at timestamptz default now(),
+  constraint toeic_questions_unique_question unique (part, question_text, difficulty)
+);
+
+create table toeic_practice_logs (
+  id uuid primary key default gen_random_uuid(),
+  question_id uuid references toeic_questions(id) on delete cascade,
+  selected_choice text not null check (selected_choice in ('A', 'B', 'C', 'D')),
+  correct_choice text not null check (correct_choice in ('A', 'B', 'C', 'D')),
+  is_correct boolean not null,
+  practiced_at timestamptz not null default now()
+);
+```
+
 For an existing project that already has `english_practice_logs`, apply this migration before using the app.
 
 ```sql
@@ -117,6 +143,73 @@ alter table english_phrases
   unique (scene, japanese, english, level);
 ```
 
+For an existing project, apply this migration to add TOEIC practice without changing the existing phrase tables.
+
+```sql
+create table if not exists toeic_questions (
+  id uuid primary key default gen_random_uuid(),
+  part text not null,
+  question_text text not null,
+  choices jsonb not null,
+  correct_choice text not null,
+  explanation text,
+  difficulty text not null default 'beginner',
+  tags text[] not null default '{}',
+  created_at timestamptz default now()
+);
+
+create table if not exists toeic_practice_logs (
+  id uuid primary key default gen_random_uuid(),
+  question_id uuid references toeic_questions(id) on delete cascade,
+  selected_choice text not null,
+  correct_choice text not null,
+  is_correct boolean not null,
+  practiced_at timestamptz not null default now()
+);
+
+alter table toeic_questions
+  drop constraint if exists toeic_questions_part_check;
+
+alter table toeic_questions
+  add constraint toeic_questions_part_check
+  check (part in ('part1', 'part2', 'part3', 'part4', 'part5', 'part6', 'part7'));
+
+alter table toeic_questions
+  drop constraint if exists toeic_questions_difficulty_check;
+
+alter table toeic_questions
+  add constraint toeic_questions_difficulty_check
+  check (difficulty in ('beginner', 'intermediate', 'advanced'));
+
+alter table toeic_questions
+  drop constraint if exists toeic_questions_correct_choice_check;
+
+alter table toeic_questions
+  add constraint toeic_questions_correct_choice_check
+  check (correct_choice in ('A', 'B', 'C', 'D'));
+
+alter table toeic_practice_logs
+  drop constraint if exists toeic_practice_logs_selected_choice_check;
+
+alter table toeic_practice_logs
+  add constraint toeic_practice_logs_selected_choice_check
+  check (selected_choice in ('A', 'B', 'C', 'D'));
+
+alter table toeic_practice_logs
+  drop constraint if exists toeic_practice_logs_correct_choice_check;
+
+alter table toeic_practice_logs
+  add constraint toeic_practice_logs_correct_choice_check
+  check (correct_choice in ('A', 'B', 'C', 'D'));
+
+alter table toeic_questions
+  drop constraint if exists toeic_questions_unique_question;
+
+alter table toeic_questions
+  add constraint toeic_questions_unique_question
+  unique (part, question_text, difficulty);
+```
+
 ## Seed Phrases
 
 ```sql
@@ -157,11 +250,15 @@ cafe,コーヒーをください。,"I'd like a coffee please.",注文,beginner,
 
 A 300-row starter CSV is available at `docs/sample-phrases.csv`.
 
+A 20-row original TOEIC starter CSV is available at `docs/toeic-sample-questions.csv`.
+
 ## Phase4 Features
 
 - Pronunciation evaluation on `/practice` uses the browser Web Speech API SpeechRecognition.
 - Listening mode on `/listening` reads the correct English aloud without showing it first, then scores the typed answer.
 - Shadowing mode on `/shadowing` reads the phrase aloud, records the learner with SpeechRecognition, and compares recognized text with the correct English.
+- TOEIC mode on `/toeic` uses separate TOEIC question and log tables for multiple-choice practice and simple accuracy stats.
+- TOEIC question management on `/toeic/questions` supports browser-based create, edit, and delete operations.
 - Learning calendar on `/stats` shows the last 35 days using `practiced_at` in Japan time.
 - Level and XP are shown on `/`.
 - Badges are computed from `english_practice_logs`; no badge table is required.

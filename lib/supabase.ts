@@ -1,5 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+
 export type Phrase = {
   id: string;
   scene: string;
@@ -14,6 +16,31 @@ export type Phrase = {
 
 export type PhraseLevel = "beginner" | "intermediate" | "advanced";
 export type PronunciationDifficulty = "easy" | "normal" | "hard";
+export type ToeicPart = "part1" | "part2" | "part3" | "part4" | "part5" | "part6" | "part7";
+export type ToeicDifficulty = "beginner" | "intermediate" | "advanced";
+export type ToeicChoiceKey = "A" | "B" | "C" | "D";
+export type ToeicChoices = Record<ToeicChoiceKey, string>;
+
+export type ToeicQuestion = {
+  id: string;
+  part: ToeicPart;
+  question_text: string;
+  choices: Json;
+  correct_choice: ToeicChoiceKey;
+  explanation: string | null;
+  difficulty: ToeicDifficulty;
+  tags: string[];
+  created_at?: string;
+};
+
+export type ToeicPracticeLog = {
+  id: string;
+  question_id: string | null;
+  selected_choice: ToeicChoiceKey;
+  correct_choice: ToeicChoiceKey;
+  is_correct: boolean;
+  practiced_at: string;
+};
 
 export type PracticeLog = {
   id: string;
@@ -32,6 +59,15 @@ export type PracticeLog = {
 type InsertPracticeLog = Omit<PracticeLog, "id" | "pronunciation_score" | "recognized_speech"> & {
   pronunciation_score?: number | null;
   recognized_speech?: string | null;
+};
+
+type InsertToeicQuestion = Omit<ToeicQuestion, "id" | "created_at"> & {
+  id?: string;
+  created_at?: string;
+};
+
+type InsertToeicPracticeLog = Omit<ToeicPracticeLog, "id"> & {
+  id?: string;
 };
 
 export type Database = {
@@ -59,6 +95,26 @@ export type Database = {
             columns: ["phrase_id"];
             isOneToOne: false;
             referencedRelation: "english_phrases";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      toeic_questions: {
+        Row: ToeicQuestion;
+        Insert: InsertToeicQuestion;
+        Update: Partial<ToeicQuestion>;
+        Relationships: [];
+      };
+      toeic_practice_logs: {
+        Row: ToeicPracticeLog;
+        Insert: InsertToeicPracticeLog;
+        Update: Partial<ToeicPracticeLog>;
+        Relationships: [
+          {
+            foreignKeyName: "toeic_practice_logs_question_id_fkey";
+            columns: ["question_id"];
+            isOneToOne: false;
+            referencedRelation: "toeic_questions";
             referencedColumns: ["id"];
           },
         ];
