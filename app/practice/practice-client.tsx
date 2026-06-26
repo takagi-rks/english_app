@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { playCorrectSound, playWrongSound } from "@/lib/audio";
 import { getSceneLabel } from "@/lib/constants";
 import { evaluatePronunciation, type PronunciationEvaluation } from "@/lib/learning";
 import { scoreAnswer, type ScoreBreakdown } from "@/lib/scoring";
@@ -255,7 +256,11 @@ export function PracticeClient({
     };
 
     setResult(nextResult);
-    speakCorrectAnswer();
+    if (nextResult.score >= 80) {
+      playCorrectSound();
+    } else {
+      playWrongSound();
+    }
     await savePracticeLog(nextResult);
   }
 
@@ -358,32 +363,36 @@ export function PracticeClient({
               />
             </div>
 
-            <div className="buttonRow" style={{ marginTop: 14 }}>
-              <button className="button" type="button" onClick={submitAnswer} disabled={isSaving}>
-                {isSaving ? "保存中" : "回答する"}
-              </button>
+            <div className="practiceActions" style={{ marginTop: 14 }}>
               <button
-                className="button buttonSecondary"
+                className="button buttonPrimaryAction"
                 type="button"
-                onClick={isListening ? stopListening : startListening}
-                disabled={!recognitionSupported}
+                onClick={result ? moveToNextPhrase : submitAnswer}
+                disabled={isSaving}
               >
-                {isListening ? "音声入力を停止" : "音声入力"}
+                {result ? "次の問題へ" : isSaving ? "保存中" : "回答を確認する"}
               </button>
-              <button className="button buttonSecondary" type="button" onClick={speakCorrectAnswer}>
-                正解を聞く
-              </button>
-              <button
-                className="button buttonSecondary"
-                type="button"
-                onClick={startPronunciationEvaluation}
-                disabled={!recognitionSupported || isPronunciationListening || isSaving}
-              >
-                {isPronunciationListening ? "評価中" : "発音評価"}
-              </button>
-              <button className="button buttonSecondary" type="button" onClick={moveToNextPhrase}>
-                次のフレーズ
-              </button>
+              <div className="buttonRow buttonRowCompact">
+                <button
+                  className="button buttonSecondary buttonSmall"
+                  type="button"
+                  onClick={isListening ? stopListening : startListening}
+                  disabled={!recognitionSupported}
+                >
+                  {isListening ? "聞き取り中..." : "音声で回答する"}
+                </button>
+                <button className="button buttonSecondary buttonSmall" type="button" onClick={speakCorrectAnswer}>
+                  正解英文を聞く
+                </button>
+                <button
+                  className="button buttonSecondary buttonSmall"
+                  type="button"
+                  onClick={startPronunciationEvaluation}
+                  disabled={!recognitionSupported || isPronunciationListening || isSaving}
+                >
+                  {isPronunciationListening ? "評価中" : "発音をチェックする"}
+                </button>
+              </div>
             </div>
 
             {!recognitionSupported ? (

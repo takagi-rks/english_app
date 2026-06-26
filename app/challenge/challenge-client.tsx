@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+import { playCorrectSound, playWrongSound } from "@/lib/audio";
 import { getLevelLabel, getSceneLabel } from "@/lib/constants";
 import { averageScore, toPercent } from "@/lib/learning";
 import { scoreAnswer } from "@/lib/scoring";
@@ -29,14 +31,15 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
   const [results, setResults] = useState<ChallengeResult[]>([]);
   const [message, setMessage] = useState<string | null>(initialErrorMessage);
   const [isSaving, setIsSaving] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
   const sceneOptions = useMemo(
     () => Array.from(new Set(phrases.map((phrase) => phrase.scene))).sort((a, b) => a.localeCompare(b, "ja")),
     [phrases],
   );
   const currentPhrase = challengePhrases?.[currentIndex] ?? null;
-  const isFinished =
-    challengePhrases !== null && challengePhrases.length > 0 && results.length === challengePhrases.length;
+  const hasNextQuestion = challengePhrases !== null && currentIndex < challengePhrases.length - 1;
+  const isFinished = challengePhrases !== null && challengePhrases.length > 0 && showResults;
   const summary = useMemo(() => {
     const correctCount = results.filter((result) => result.isCorrect).length;
 
@@ -69,6 +72,7 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
     setCurrentResult(null);
     setResults([]);
     setMessage(null);
+    setShowResults(false);
   }
 
   async function submitAnswer() {
@@ -86,6 +90,12 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
       score: breakdown.score,
       isCorrect: breakdown.score >= 80,
     };
+
+    if (result.isCorrect) {
+      playCorrectSound();
+    } else {
+      playWrongSound();
+    }
 
     setIsSaving(true);
     setMessage(null);
@@ -119,6 +129,11 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
   }
 
   function moveNext() {
+    if (!hasNextQuestion) {
+      setShowResults(true);
+      return;
+    }
+
     setAnswer("");
     setCurrentResult(null);
     setMessage(null);
@@ -158,8 +173,13 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
           </select>
         </div>
         <p className="metaText">対象教材: {selectedCount}件 / 出題数: 最大10問</p>
-        <button className="button formGap" type="button" onClick={startChallenge} disabled={selectedCount === 0}>
-          チャレンジ開始
+        <button
+          className="button buttonPrimaryAction formGap"
+          type="button"
+          onClick={startChallenge}
+          disabled={selectedCount === 0}
+        >
+          10問チャレンジを開始する
         </button>
       </section>
     );
@@ -198,9 +218,14 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
             <strong>{summary.accuracy}%</strong>
           </div>
         </div>
-        <button className="button buttonSecondary formGap" type="button" onClick={() => setChallengePhrases(null)}>
-          もう一度カテゴリを選ぶ
-        </button>
+        <div className="buttonRow formGap">
+          <button className="button buttonPrimaryAction" type="button" onClick={startChallenge}>
+            もう一度挑戦する
+          </button>
+          <Link className="button buttonSecondary" href="/practice">
+            通常練習へ
+          </Link>
+        </div>
       </section>
     );
   }
@@ -231,12 +256,12 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
           </div>
           <div className="buttonRow formGap">
             {currentResult ? (
-              <button className="button" type="button" onClick={moveNext}>
-                次の問題へ
+              <button className="button buttonPrimaryAction" type="button" onClick={moveNext}>
+                {hasNextQuestion ? "次の問題へ" : "結果を見る"}
               </button>
             ) : (
-              <button className="button" type="button" onClick={submitAnswer} disabled={isSaving}>
-                {isSaving ? "保存中" : "回答する"}
+              <button className="button buttonPrimaryAction" type="button" onClick={submitAnswer} disabled={isSaving}>
+                {isSaving ? "保存中" : "回答を確認する"}
               </button>
             )}
           </div>

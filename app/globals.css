@@ -47,6 +47,7 @@ button {
 button:disabled {
   cursor: not-allowed;
   opacity: 0.58;
+  filter: grayscale(0.18);
 }
 
 .siteHeader {
@@ -181,13 +182,28 @@ a:focus-visible {
   background: var(--primary-dark);
 }
 
+.button:disabled:hover {
+  background: var(--primary);
+}
+
+.buttonPrimaryAction {
+  min-height: 52px;
+  padding: 0 22px;
+  box-shadow: 0 8px 18px rgba(15, 76, 66, 0.18);
+}
+
 .buttonSecondary {
   background: var(--surface-subtle);
   color: var(--text);
+  box-shadow: none;
 }
 
 .buttonSecondary:hover {
   background: #e1e6e1;
+}
+
+.buttonSecondary:disabled:hover {
+  background: var(--surface-subtle);
 }
 
 .buttonDanger {
@@ -198,6 +214,15 @@ a:focus-visible {
   min-height: 36px;
   padding: 0 12px;
   font-size: 14px;
+}
+
+.practiceActions {
+  display: grid;
+  gap: 12px;
+}
+
+.buttonRowCompact {
+  gap: 8px;
 }
 
 .compactActions {
