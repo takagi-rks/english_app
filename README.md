@@ -160,10 +160,23 @@ A 300-row starter CSV is available at `docs/sample-phrases.csv`.
 ## Phase4 Features
 
 - Pronunciation evaluation on `/practice` uses the browser Web Speech API SpeechRecognition.
+- Listening mode on `/listening` reads the correct English aloud without showing it first, then scores the typed answer.
+- Shadowing mode on `/shadowing` reads the phrase aloud, records the learner with SpeechRecognition, and compares recognized text with the correct English.
 - Learning calendar on `/stats` shows the last 35 days using `practiced_at` in Japan time.
 - Level and XP are shown on `/`.
 - Badges are computed from `english_practice_logs`; no badge table is required.
 - Mobile UI uses wrapping navigation, larger buttons, stacked forms, and scrollable/card-like tables.
+
+### Listening And Shadowing Notes
+
+Listening and shadowing do not use AI or external audio sources. They use the browser Web Speech API:
+
+- SpeechSynthesis for English text-to-speech playback
+- SpeechRecognition for shadowing speech capture and pronunciation comparison
+
+Browser support depends on the user's browser and device. Unsupported browsers show Japanese guidance and keep the rest of the app usable.
+
+Both modes reuse the existing tables only. `/listening` stores the typed answer in `english_practice_logs.user_answer`; `/shadowing` stores recognized speech in `user_answer` and `recognized_speech`, with `pronunciation_score` set to the computed score. No `mode` column or additional table is required.
 
 ### Pronunciation Evaluation Notes
 

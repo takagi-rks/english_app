@@ -5,6 +5,7 @@ import { playCorrectSound, playWrongSound } from "@/lib/audio";
 import { getSceneLabel } from "@/lib/constants";
 import { evaluatePronunciation, type PronunciationEvaluation } from "@/lib/learning";
 import { scoreAnswer, type ScoreBreakdown } from "@/lib/scoring";
+import { getSpeechRecognitionConstructor, speakEnglish } from "@/lib/speech";
 import { createSupabaseClient, type Phrase } from "@/lib/supabase";
 
 type PracticeResult = ScoreBreakdown & {
@@ -22,14 +23,6 @@ type PronunciationResult = PronunciationEvaluation & {
   recognizedSpeech: string;
   correctEnglish: string;
 };
-
-function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
-}
 
 function getScenes(phrases: Phrase[]): string[] {
   return Array.from(new Set(phrases.map((phrase) => phrase.scene))).sort((a, b) =>
@@ -77,11 +70,9 @@ export function PracticeClient({
       return;
     }
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(selectedPhrase.english);
-    utterance.lang = "en-US";
-    utterance.rate = 0.92;
-    window.speechSynthesis.speak(utterance);
+    if (!speakEnglish(selectedPhrase.english)) {
+      setSaveMessage("このブラウザでは読み上げ機能を利用できません。");
+    }
   }
 
   function stopListening() {
