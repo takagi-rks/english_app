@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ToeicClient } from "./toeic-client";
 import { createSupabaseClient, type ToeicPracticeLog, type ToeicQuestion } from "@/lib/supabase";
 
@@ -61,6 +62,11 @@ export default async function ToeicPage() {
       <div className="pageHeader">
         <h1>TOEIC練習</h1>
         <p>Partと難易度を選び、選択式のTOEIC風オリジナル問題を1問ずつ練習します。</p>
+      </div>
+      <div className="buttonRow homeActions">
+        <Link className="button buttonPrimaryAction" href="/toeic/challenge">
+          TOEIC 10問チャレンジ
+        </Link>
       </div>
       <ToeicClient initialQuestions={questions} initialLogs={logs} initialErrorMessage={errorMessage} />
     </section>
