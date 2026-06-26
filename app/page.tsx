@@ -119,6 +119,9 @@ export default async function HomePage() {
         <h1>学習ホーム</h1>
         <p>今日の進捗を確認して、次に取り組む練習へすぐ移動できます。</p>
       </div>
+      <p className="metaText">
+        スマホのブラウザメニューからホーム画面に追加すると、アプリのように起動できます。
+      </p>
 
       <section className="panel">
         <h2 className="sectionTitle">今日の学習</h2>

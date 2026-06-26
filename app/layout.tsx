@@ -1,10 +1,28 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { ServiceWorkerRegister } from "./service-worker-register";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "English Phrase Practice",
-  description: "日常英会話フレーズ練習アプリ",
+  title: "英会話トレーナー",
+  description: "英会話フレーズ、リスニング、シャドーイング、会話練習をスマホで学習できるPWAです。",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "英会話",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
 };
 
 export default function RootLayout({
@@ -34,6 +52,7 @@ export default function RootLayout({
           </nav>
         </header>
         <main>{children}</main>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
