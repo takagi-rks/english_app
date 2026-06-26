@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChallengeResumePanel } from "./challenge-resume-panel";
 import {
   computeBadges,
   computeLearningSummary,
@@ -122,6 +123,7 @@ export default async function HomePage() {
       <p className="metaText">
         スマホのブラウザメニューからホーム画面に追加すると、アプリのように起動できます。
       </p>
+      <ChallengeResumePanel />
 
       <section className="panel">
         <h2 className="sectionTitle">今日の学習</h2>

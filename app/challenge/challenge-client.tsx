@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { playCorrectSound, playWrongSound } from "@/lib/audio";
+import {
+  clearPhraseChallengeDraft,
+  loadPhraseChallengeDraft,
+  savePhraseChallengeDraft,
+} from "@/lib/challenge-storage";
 import { getLevelLabel, getSceneLabel } from "@/lib/constants";
 import { averageScore, toPercent } from "@/lib/learning";
 import { scoreAnswer } from "@/lib/scoring";
@@ -32,6 +37,7 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
   const [message, setMessage] = useState<string | null>(initialErrorMessage);
   const [isSaving, setIsSaving] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const hasLoadedDraftRef = useRef(false);
 
   const sceneOptions = useMemo(
     () => Array.from(new Set(phrases.map((phrase) => phrase.scene))).sort((a, b) => a.localeCompare(b, "ja")),
@@ -50,6 +56,42 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
       accuracy: toPercent(correctCount, results.length),
     };
   }, [results]);
+
+  useEffect(() => {
+    if (hasLoadedDraftRef.current) {
+      return;
+    }
+
+    hasLoadedDraftRef.current = true;
+    const timerId = window.setTimeout(() => {
+      const draft = loadPhraseChallengeDraft();
+
+      if (!draft) {
+        return;
+      }
+
+      const phraseById = new Map(phrases.map((phrase) => [phrase.id, phrase]));
+      const restoredPhrases = draft.phraseIds
+        .map((phraseId) => phraseById.get(phraseId))
+        .filter((phrase): phrase is Phrase => phrase !== undefined);
+
+      if (restoredPhrases.length === 0) {
+        clearPhraseChallengeDraft();
+        return;
+      }
+
+      setSelectedScene(draft.selectedScene);
+      setChallengePhrases(restoredPhrases);
+      setCurrentIndex(Math.min(draft.currentIndex, restoredPhrases.length - 1));
+      setAnswer(draft.answer);
+      setCurrentResult(draft.currentResult);
+      setResults(draft.results);
+      setShowResults(draft.showResults);
+      setMessage("途中のチャレンジを再開しました。");
+    }, 0);
+
+    return () => window.clearTimeout(timerId);
+  }, [phrases]);
 
   function shufflePhrases(targetPhrases: Phrase[]): Phrase[] {
     const shuffled = [...targetPhrases];
@@ -73,6 +115,7 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
     setResults([]);
     setMessage(null);
     setShowResults(false);
+    clearPhraseChallengeDraft();
   }
 
   async function submitAnswer() {
@@ -131,6 +174,7 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
   function moveNext() {
     if (!hasNextQuestion) {
       setShowResults(true);
+      clearPhraseChallengeDraft();
       return;
     }
 
@@ -138,6 +182,33 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
     setCurrentResult(null);
     setMessage(null);
     setCurrentIndex((index) => index + 1);
+  }
+
+  function interruptChallenge() {
+    if (!challengePhrases) {
+      return;
+    }
+
+    const shouldInterrupt = window.confirm("チャレンジを中断して、続きから再開できるように保存しますか？");
+
+    if (!shouldInterrupt) {
+      return;
+    }
+
+    savePhraseChallengeDraft({
+      selectedScene,
+      phraseIds: challengePhrases.map((phrase) => phrase.id),
+      currentIndex,
+      answer,
+      currentResult,
+      results,
+      showResults,
+    });
+    setChallengePhrases(null);
+    setCurrentResult(null);
+    setAnswer("");
+    setShowResults(false);
+    setMessage("チャレンジを中断しました。ホーム画面から続きに戻れます。");
   }
 
   if (initialErrorMessage) {
@@ -264,6 +335,9 @@ export function ChallengeClient({ phrases, initialErrorMessage }: ChallengeClien
                 {isSaving ? "保存中" : "回答を確認する"}
               </button>
             )}
+            <button className="button buttonSecondary" type="button" onClick={interruptChallenge} disabled={isSaving}>
+              中断する
+            </button>
           </div>
           {message ? <p className="metaText">{message}</p> : null}
           {currentResult ? (

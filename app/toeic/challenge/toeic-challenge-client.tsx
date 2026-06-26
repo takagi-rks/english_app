@@ -1,7 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { playCorrectSound, playWrongSound } from "@/lib/audio";
+import {
+  clearToeicChallengeDraft,
+  loadToeicChallengeDraft,
+  saveToeicChallengeDraft,
+} from "@/lib/challenge-storage";
 import {
   getToeicDifficultyLabel,
   getToeicPartLabel,
@@ -86,6 +91,7 @@ export function ToeicChallengeClient({
   const [showResults, setShowResults] = useState(false);
   const [message, setMessage] = useState<string | null>(initialErrorMessage);
   const [isSaving, setIsSaving] = useState(false);
+  const hasLoadedDraftRef = useRef(false);
 
   const availableQuestions = useMemo(
     () =>
@@ -118,6 +124,60 @@ export function ToeicChallengeClient({
     })),
   );
 
+  useEffect(() => {
+    if (hasLoadedDraftRef.current) {
+      return;
+    }
+
+    hasLoadedDraftRef.current = true;
+    const timerId = window.setTimeout(() => {
+      const draft = loadToeicChallengeDraft();
+
+      if (!draft) {
+        return;
+      }
+
+      const questionById = new Map(initialQuestions.map((question) => [question.id, question]));
+      const restoredQuestions = draft.questionIds
+        .map((questionId) => questionById.get(questionId))
+        .filter((question): question is ToeicQuestion => question !== undefined);
+      const restoreAnswer = (answer: (typeof draft.answers)[number]): ChallengeAnswer | null => {
+        const question = questionById.get(answer.questionId);
+
+        if (!question) {
+          return null;
+        }
+
+        return {
+          question,
+          selectedChoice: answer.selectedChoice,
+          correctChoice: answer.correctChoice,
+          isCorrect: answer.isCorrect,
+        };
+      };
+      const restoredAnswers = draft.answers
+        .map(restoreAnswer)
+        .filter((answer): answer is ChallengeAnswer => answer !== null);
+      const restoredCurrentAnswer = draft.currentAnswer ? restoreAnswer(draft.currentAnswer) : null;
+
+      if (restoredQuestions.length === 0) {
+        clearToeicChallengeDraft();
+        return;
+      }
+
+      setSelectedPart(draft.selectedPart);
+      setSelectedDifficulty(draft.selectedDifficulty);
+      setChallengeQuestions(restoredQuestions);
+      setCurrentIndex(Math.min(draft.currentIndex, restoredQuestions.length - 1));
+      setCurrentAnswer(restoredCurrentAnswer);
+      setAnswers(restoredAnswers);
+      setShowResults(draft.showResults);
+      setMessage("途中のTOEICチャレンジを再開しました。");
+    }, 0);
+
+    return () => window.clearTimeout(timerId);
+  }, [initialQuestions]);
+
   function startChallenge() {
     setChallengeQuestions(shuffleQuestions(availableQuestions).slice(0, 10));
     setCurrentIndex(0);
@@ -125,6 +185,7 @@ export function ToeicChallengeClient({
     setAnswers([]);
     setShowResults(false);
     setMessage(null);
+    clearToeicChallengeDraft();
   }
 
   async function selectChoice(choice: ToeicChoiceKey) {
@@ -176,12 +237,54 @@ export function ToeicChallengeClient({
   function moveNext() {
     if (!hasNextQuestion) {
       setShowResults(true);
+      clearToeicChallengeDraft();
       return;
     }
 
     setCurrentIndex((index) => index + 1);
     setCurrentAnswer(null);
     setMessage(null);
+  }
+
+  function interruptChallenge() {
+    if (!challengeQuestions) {
+      return;
+    }
+
+    const shouldInterrupt = window.confirm(
+      "TOEICチャレンジを中断して、続きから再開できるように保存しますか？",
+    );
+
+    if (!shouldInterrupt) {
+      return;
+    }
+
+    saveToeicChallengeDraft({
+      selectedPart,
+      selectedDifficulty,
+      questionIds: challengeQuestions.map((question) => question.id),
+      currentIndex,
+      currentAnswer: currentAnswer
+        ? {
+            questionId: currentAnswer.question.id,
+            selectedChoice: currentAnswer.selectedChoice,
+            correctChoice: currentAnswer.correctChoice,
+            isCorrect: currentAnswer.isCorrect,
+          }
+        : null,
+      answers: answers.map((answer) => ({
+        questionId: answer.question.id,
+        selectedChoice: answer.selectedChoice,
+        correctChoice: answer.correctChoice,
+        isCorrect: answer.isCorrect,
+      })),
+      showResults,
+    });
+    setChallengeQuestions(null);
+    setCurrentAnswer(null);
+    setAnswers([]);
+    setShowResults(false);
+    setMessage("TOEICチャレンジを中断しました。ホーム画面から続きに戻れます。");
   }
 
   function resetChallenge() {
@@ -372,6 +475,11 @@ export function ToeicChallengeClient({
               </button>
             </section>
           ) : null}
+          <div className="buttonRow formGap">
+            <button className="button buttonSecondary" type="button" onClick={interruptChallenge} disabled={isSaving}>
+              中断する
+            </button>
+          </div>
         </>
       ) : (
         <div className="emptyState">表示できるTOEIC問題がありません。</div>
