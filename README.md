@@ -68,6 +68,28 @@ create table toeic_practice_logs (
 );
 ```
 
+Conversation mode uses fixed scenario tables and does not call any AI API.
+
+```sql
+create table if not exists conversation_scenarios (
+  id uuid primary key default gen_random_uuid(),
+  scene text not null,
+  title text not null,
+  description text,
+  level text not null default 'beginner',
+  turns jsonb not null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists conversation_logs (
+  id uuid primary key default gen_random_uuid(),
+  scenario_id uuid references conversation_scenarios(id) on delete cascade,
+  score int not null,
+  is_completed boolean not null default false,
+  practiced_at timestamptz not null default now()
+);
+```
+
 For an existing project that already has `english_practice_logs`, apply this migration before using the app.
 
 ```sql
@@ -210,6 +232,42 @@ alter table toeic_questions
   unique (part, question_text, difficulty);
 ```
 
+For conversation mode, apply this migration to add the fixed scenario tables.
+
+```sql
+create table if not exists conversation_scenarios (
+  id uuid primary key default gen_random_uuid(),
+  scene text not null,
+  title text not null,
+  description text,
+  level text not null default 'beginner',
+  turns jsonb not null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists conversation_logs (
+  id uuid primary key default gen_random_uuid(),
+  scenario_id uuid references conversation_scenarios(id) on delete cascade,
+  score int not null,
+  is_completed boolean not null default false,
+  practiced_at timestamptz not null default now()
+);
+
+alter table conversation_scenarios
+  drop constraint if exists conversation_scenarios_level_check;
+
+alter table conversation_scenarios
+  add constraint conversation_scenarios_level_check
+  check (level in ('beginner', 'intermediate', 'advanced'));
+
+alter table conversation_logs
+  drop constraint if exists conversation_logs_score_check;
+
+alter table conversation_logs
+  add constraint conversation_logs_score_check
+  check (score >= 0 and score <= 100);
+```
+
 ## Seed Phrases
 
 ```sql
@@ -252,11 +310,73 @@ A 300-row starter CSV is available at `docs/sample-phrases.csv`.
 
 A 20-row original TOEIC starter CSV is available at `docs/toeic-sample-questions.csv`.
 
+## Conversation Scenario Seeds
+
+These scenarios are original fixed scripts. They do not use AI.
+
+```sql
+insert into conversation_scenarios (scene, title, description, level, turns) values
+('cafe', 'カフェ注文', 'カフェで飲み物を注文する会話です。', 'beginner', '[
+  {"speaker":"ai","text":"Welcome. What would you like to order?","translation":"いらっしゃいませ。何を注文しますか？"},
+  {"speaker":"user","expected":"I would like a coffee, please.","translation":"コーヒーをください。"},
+  {"speaker":"ai","text":"Sure. Would you like it hot or iced?","translation":"かしこまりました。ホットとアイスのどちらにしますか？"},
+  {"speaker":"user","expected":"I would like it hot.","translation":"ホットでお願いします。"},
+  {"speaker":"ai","text":"Anything else?","translation":"他にご注文はありますか？"},
+  {"speaker":"user","expected":"That is all, thank you.","translation":"以上です、ありがとうございます。"}
+]'::jsonb),
+('hotel', 'ホテルチェックイン', 'ホテルのフロントでチェックインします。', 'beginner', '[
+  {"speaker":"ai","text":"Good evening. Do you have a reservation?","translation":"こんばんは。ご予約はありますか？"},
+  {"speaker":"user","expected":"Yes, I have a reservation under Sato.","translation":"はい、佐藤の名前で予約しています。"},
+  {"speaker":"ai","text":"May I see your passport, please?","translation":"パスポートを拝見できますか？"},
+  {"speaker":"user","expected":"Here you are.","translation":"どうぞ。"},
+  {"speaker":"ai","text":"Your room is on the fifth floor.","translation":"お部屋は5階です。"},
+  {"speaker":"user","expected":"Thank you very much.","translation":"ありがとうございます。"}
+]'::jsonb),
+('directions', '道案内', '駅までの行き方を尋ねる会話です。', 'beginner', '[
+  {"speaker":"ai","text":"Hello. Can I help you?","translation":"こんにちは。お手伝いしましょうか？"},
+  {"speaker":"user","expected":"How can I get to the station?","translation":"駅にはどう行けばいいですか？"},
+  {"speaker":"ai","text":"Go straight for two blocks and turn left.","translation":"2ブロックまっすぐ進んで左に曲がってください。"},
+  {"speaker":"user","expected":"How long does it take?","translation":"どのくらい時間がかかりますか？"},
+  {"speaker":"ai","text":"It takes about ten minutes on foot.","translation":"歩いて約10分です。"},
+  {"speaker":"user","expected":"Thank you for your help.","translation":"助けてくれてありがとうございます。"}
+]'::jsonb),
+('restaurant', 'レストラン予約', '電話でレストランを予約します。', 'intermediate', '[
+  {"speaker":"ai","text":"Thank you for calling Green Table.","translation":"グリーンテーブルにお電話ありがとうございます。"},
+  {"speaker":"user","expected":"I would like to make a reservation for tonight.","translation":"今夜の予約をしたいです。"},
+  {"speaker":"ai","text":"How many people are in your party?","translation":"何名様ですか？"},
+  {"speaker":"user","expected":"A table for two, please.","translation":"2名でお願いします。"},
+  {"speaker":"ai","text":"What time would you like to come?","translation":"何時に来店されますか？"},
+  {"speaker":"user","expected":"At seven thirty, please.","translation":"7時半でお願いします。"},
+  {"speaker":"ai","text":"Your reservation is confirmed.","translation":"ご予約を承りました。"},
+  {"speaker":"user","expected":"Thank you. See you tonight.","translation":"ありがとうございます。今夜伺います。"}
+]'::jsonb),
+('shopping', '買い物', '店員にサイズや値段を尋ねます。', 'beginner', '[
+  {"speaker":"ai","text":"Hi. Are you looking for anything special?","translation":"こんにちは。何かお探しですか？"},
+  {"speaker":"user","expected":"I am looking for a jacket.","translation":"ジャケットを探しています。"},
+  {"speaker":"ai","text":"What size do you need?","translation":"サイズはいくつですか？"},
+  {"speaker":"user","expected":"Do you have this in medium?","translation":"これのMサイズはありますか？"},
+  {"speaker":"ai","text":"Yes, here it is.","translation":"はい、こちらです。"},
+  {"speaker":"user","expected":"How much is it?","translation":"これはいくらですか？"}
+]'::jsonb),
+('airport', '空港チェックイン', '空港カウンターで搭乗手続きをします。', 'intermediate', '[
+  {"speaker":"ai","text":"May I have your passport and ticket?","translation":"パスポートと航空券をお願いします。"},
+  {"speaker":"user","expected":"Sure. Here they are.","translation":"はい、こちらです。"},
+  {"speaker":"ai","text":"Do you have any bags to check?","translation":"お預けの荷物はありますか？"},
+  {"speaker":"user","expected":"Yes, I have one suitcase.","translation":"はい、スーツケースが1つあります。"},
+  {"speaker":"ai","text":"Would you like a window seat or an aisle seat?","translation":"窓側と通路側のどちらがよろしいですか？"},
+  {"speaker":"user","expected":"I would like an aisle seat, please.","translation":"通路側の席をお願いします。"},
+  {"speaker":"ai","text":"Here is your boarding pass.","translation":"搭乗券です。"},
+  {"speaker":"user","expected":"Thank you. Which gate should I go to?","translation":"ありがとうございます。どのゲートに行けばいいですか？"}
+]'::jsonb);
+```
+
 ## Phase4 Features
 
+- The home page is a learning dashboard with today's answers, accuracy, goal progress, XP, streaks, badges, and recommended next practice.
 - Pronunciation evaluation on `/practice` uses the browser Web Speech API SpeechRecognition.
 - Listening mode on `/listening` reads the correct English aloud without showing it first, then scores the typed answer.
 - Shadowing mode on `/shadowing` reads the phrase aloud, records the learner with SpeechRecognition, and compares recognized text with the correct English.
+- Conversation mode on `/conversation` uses fixed Supabase scenarios, text scoring, SpeechSynthesis playback, and `conversation_logs`.
 - TOEIC mode on `/toeic` uses separate TOEIC question and log tables for multiple-choice practice and simple accuracy stats.
 - TOEIC question management on `/toeic/questions` supports browser-based create, edit, and delete operations.
 - Learning calendar on `/stats` shows the last 35 days using `practiced_at` in Japan time.

@@ -42,6 +42,26 @@ export type ToeicPracticeLog = {
   practiced_at: string;
 };
 
+export type ConversationLevel = "beginner" | "intermediate" | "advanced";
+
+export type ConversationScenario = {
+  id: string;
+  scene: string;
+  title: string;
+  description: string | null;
+  level: ConversationLevel;
+  turns: Json;
+  created_at?: string;
+};
+
+export type ConversationLog = {
+  id: string;
+  scenario_id: string | null;
+  score: number;
+  is_completed: boolean;
+  practiced_at: string;
+};
+
 export type PracticeLog = {
   id: string;
   phrase_id: string | null;
@@ -67,6 +87,15 @@ type InsertToeicQuestion = Omit<ToeicQuestion, "id" | "created_at"> & {
 };
 
 type InsertToeicPracticeLog = Omit<ToeicPracticeLog, "id"> & {
+  id?: string;
+};
+
+type InsertConversationScenario = Omit<ConversationScenario, "id" | "created_at"> & {
+  id?: string;
+  created_at?: string;
+};
+
+type InsertConversationLog = Omit<ConversationLog, "id"> & {
   id?: string;
 };
 
@@ -115,6 +144,26 @@ export type Database = {
             columns: ["question_id"];
             isOneToOne: false;
             referencedRelation: "toeic_questions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      conversation_scenarios: {
+        Row: ConversationScenario;
+        Insert: InsertConversationScenario;
+        Update: Partial<ConversationScenario>;
+        Relationships: [];
+      };
+      conversation_logs: {
+        Row: ConversationLog;
+        Insert: InsertConversationLog;
+        Update: Partial<ConversationLog>;
+        Relationships: [
+          {
+            foreignKeyName: "conversation_logs_scenario_id_fkey";
+            columns: ["scenario_id"];
+            isOneToOne: false;
+            referencedRelation: "conversation_scenarios";
             referencedColumns: ["id"];
           },
         ];
