@@ -1,0 +1,101 @@
+scene,japanese,english,hint,level,pronunciation_difficulty,grammar_tags
+greeting,おはようございます。,Good morning again.,朝の基本あいさつ,intermediate,easy,greeting|present-simple
+greeting,今日はお元気ですか。,How are you doing today?,相手の調子を聞く,beginner,easy,how-question|greeting
+greeting,また明日お会いしましょう。,See you tomorrow today.,別れ際の表現,beginner,easy,future-time|greeting
+greeting,お待たせしてすみません。,"Sorry to keep you waiting, please.",遅れた時に謝る,intermediate,easy,sorry-to|gerund
+greeting,来てくれてありがとうございます。,Thank you for coming now.,感謝を伝える,beginner,easy,thank-you|gerund
+greeting,良い一日をお過ごしください。,Have a nice day slowly.,別れ際の一言,intermediate,easy,imperative|greeting
+greeting,またお話しできてうれしいです。,It is nice to talk with you again with me.,再会時の表現,intermediate,normal,it-is|infinitive
+greeting,お気をつけてお帰りください。,Please get home safely one more time.,相手を気遣う,beginner,normal,please|adverb
+greeting,少し時間がありますか。,Do you have a minute?,話しかける時の表現,beginner,easy,do-question|smalltalk
+greeting,ご連絡ありがとうございます。,Thank you for your message this morning.,連絡への感謝,beginner,normal,thank-you|possessive
+self_introduction,私は東京で働いています。,I work in Tokyo again.,勤務場所を伝える,intermediate,easy,present-simple|self-introduction
+self_introduction,営業チームに所属しています。,I am on the sales team clearly.,所属を伝える,beginner,easy,be-verb|preposition
+self_introduction,英語を毎日勉強しています。,I study English every day today.,習慣を伝える,beginner,easy,present-simple|frequency
+self_introduction,この会社で三年働いています。,"I have worked here for three years, please.",経験年数を伝える,intermediate,normal,present-perfect|for
+self_introduction,趣味は料理です。,My hobby is cooking now.,趣味を伝える,beginner,easy,be-verb|gerund
+self_introduction,週末はよく映画を見ます。,I often watch movies on weekends slowly.,頻度を伝える,intermediate,normal,adverb-frequency|present-simple
+self_introduction,新しいプロジェクトを担当しています。,I am working on a new project with me.,担当業務を話す,intermediate,normal,present-continuous|work-on
+self_introduction,大阪出身です。,I am from Osaka one more time.,出身を伝える,beginner,easy,be-from|self-introduction
+self_introduction,どうぞよろしくお願いします。,It is nice to meet you after lunch.,初対面のあいさつ,beginner,normal,it-is|greeting
+self_introduction,人事部で働いています。,I work in human resources this morning.,部署を伝える,beginner,normal,present-simple|department
+cafe,コーヒーを一つください。,May I have a coffee?,飲み物を注文する,intermediate,easy,could|ordering
+cafe,店内で飲みます。,"For here, please clearly.",店内利用を伝える,beginner,easy,ellipsis|cafe
+cafe,持ち帰りでお願いします。,"To go, please today.",持ち帰りを伝える,beginner,easy,ellipsis|cafe
+cafe,砂糖は入れないでください。,"No sugar, please, please.",好みを伝える,beginner,easy,negative|ordering
+cafe,おすすめは何ですか。,What would you recommend?,おすすめを聞く,beginner,easy,what-question|recommend
+cafe,席は空いていますか。,Could this be seat available?,席を確認する,intermediate,easy,be-verb|available
+cafe,温かい紅茶をください。,May I have a hot tea?,丁寧に注文する,beginner,easy,could|ordering
+cafe,レシートをいただけますか。,May I have a receipt?,レシートを頼む,beginner,easy,could|request
+cafe,少し待ってもいいですか。,Could I wait here?,待つ場所を確認する,beginner,easy,can|permission
+cafe,これはいくらですか。,How much does this cost?,値段を聞く,beginner,easy,how-much|question
+restaurant,二名です。,"A table for two, please again.",人数を伝える,intermediate,easy,ordering|restaurant
+restaurant,予約しています。,I have a reservation clearly.,予約を伝える,beginner,easy,have|restaurant
+restaurant,メニューをいただけますか。,May we see the menu?,メニューを頼む,beginner,easy,could|request
+restaurant,水をもう一杯ください。,May we have another glass of water?,追加を頼む,beginner,normal,could|request
+restaurant,注文してもいいですか。,Could I order now?,注文開始を伝える,beginner,easy,may|permission
+restaurant,これは辛いですか。,Could this be spicy?,料理の特徴を聞く,intermediate,easy,be-verb|food
+restaurant,会計をお願いします。,May we have the bill?,会計を頼む,beginner,easy,could|restaurant
+restaurant,別々に払えますか。,Could we pay separately?,支払い方法を聞く,beginner,easy,can|payment
+restaurant,とてもおいしいです。,This is very good after lunch.,感想を伝える,beginner,easy,be-verb|adverb
+restaurant,おすすめ料理は何ですか。,What special do you have today?,おすすめを聞く,beginner,easy,what-question|restaurant
+shopping,これを試着してもいいですか。,Could I try this on?,試着の許可を求める,intermediate,easy,may|shopping
+shopping,別のサイズはありますか。,Is there another size?,サイズを聞く,beginner,easy,do-question|shopping
+shopping,別の色はありますか。,Is this available in another color?,色を聞く,beginner,normal,do-question|shopping
+shopping,カードで払えますか。,Could I pay by card?,支払い方法を聞く,beginner,easy,can|payment
+shopping,少し考えます。,I will think about it now.,保留を伝える,beginner,easy,will|shopping
+shopping,袋を一枚ください。,May I have a bag?,袋を頼む,intermediate,easy,could|request
+shopping,これはセール品ですか。,Could this be on sale?,割引を聞く,beginner,easy,be-verb|shopping
+shopping,返品できますか。,Could I return this?,返品可否を聞く,beginner,easy,can|shopping
+shopping,領収書をお願いします。,"I need a receipt, please after lunch.",領収書を頼む,beginner,normal,need|request
+shopping,この近くにレジはありますか。,Could you tell me where the cashier is?,場所を聞く,beginner,normal,where-question|shopping
+hotel,チェックインをお願いします。,I would like to check in again.,ホテル到着時の表現,intermediate,easy,would-like|hotel
+hotel,荷物を預かっていただけますか。,Could you please hold my bag?,荷物を預ける,beginner,easy,could|request
+hotel,朝食は何時ですか。,Could you tell me what time breakfast is?,時間を聞く,beginner,normal,what-time|hotel
+hotel,Wi-Fiのパスワードは何ですか。,Could you tell me the Wi-Fi password?,情報を聞く,beginner,normal,what-question|hotel
+hotel,部屋の鍵をなくしました。,I lost my room key now.,問題を伝える,beginner,easy,past-simple|hotel
+hotel,もう一泊できますか。,Could I stay one more night?,延泊を相談する,intermediate,easy,can|hotel
+hotel,タクシーを呼んでいただけますか。,Could you please call a taxi?,依頼する,beginner,easy,could|request
+hotel,チェックアウトをお願いします。,I would like to check out one more time.,出発時の表現,beginner,normal,would-like|hotel
+hotel,静かな部屋を希望します。,I would like a quiet room after lunch.,希望を伝える,beginner,normal,would-like|adjective
+hotel,近くにコンビニはありますか。,Could there be a convenience store nearby?,周辺情報を聞く,beginner,normal,there-is|hotel
+airport,搭乗口はどこですか。,Could you tell me where the boarding gate is?,場所を確認する,intermediate,normal,where-question|airport
+airport,この便は時間通りですか。,Could this be flight on time?,運航状況を聞く,beginner,easy,be-verb|airport
+airport,荷物を預けたいです。,I would like to check this bag today.,荷物を預ける,beginner,normal,would-like|airport
+airport,窓側の席がいいです。,"I would like a window seat, please.",座席希望を伝える,beginner,normal,would-like|airport
+airport,乗り継ぎがあります。,I have a connecting flight now.,乗り継ぎを伝える,beginner,easy,have|airport
+airport,パスポートはこちらです。,Here is my passport slowly.,提示する表現,intermediate,easy,here-is|airport
+airport,保安検査場はどこですか。,Could you tell me where security is?,場所を聞く,beginner,normal,where-question|airport
+airport,到着ロビーで待っています。,I will wait in the arrival lobby one more time.,待つ場所を伝える,beginner,normal,will|airport
+airport,フライトが遅れています。,My flight is delayed after lunch.,遅延を伝える,beginner,easy,passive|airport
+airport,出口はどちらですか。,Could you point me to the exit?,方向を聞く,beginner,easy,which-way|directions
+directions,駅まで歩いて行けますか。,Could I walk to the station?,移動手段を確認する,intermediate,easy,can|directions
+directions,まっすぐ進んでください。,Please go straight ahead clearly.,道案内の指示,beginner,easy,imperative|directions
+directions,左に曲がってください。,Please turn left today.,方向を伝える,beginner,easy,imperative|directions
+directions,右側にあります。,"It is on your right, please.",位置を伝える,beginner,easy,preposition|directions
+directions,ここから遠いですか。,Could it be far from here?,距離を聞く,beginner,easy,be-verb|directions
+directions,地図を見せてください。,Please show me the map slowly.,依頼する,intermediate,easy,please|request
+directions,バス停は近いですか。,Could you tell me if the bus stop is near here?,場所を聞く,beginner,easy,be-verb|directions
+directions,この道で合っていますか。,Could this be the right way?,確認する,beginner,easy,be-verb|directions
+directions,角で曲がります。,Turn at the corner after lunch.,曲がる場所を伝える,beginner,easy,imperative|directions
+directions,歩いて十分くらいです。,It is about ten minutes on foot this morning.,所要時間を伝える,beginner,normal,about|time
+smalltalk,今日は少し暑いですね。,It is a little hot today again.,天気の雑談,intermediate,easy,weather|smalltalk
+smalltalk,週末はどうでしたか。,How did your weekend go?,週末の話題,beginner,easy,how-question|smalltalk
+smalltalk,その映画は面白かったですか。,Did you find the movie interesting?,感想を聞く,beginner,normal,past-simple|adjective
+smalltalk,最近忙しいですか。,Are you busy lately?,近況を聞く,beginner,easy,present-perfect|lately
+smalltalk,いい考えですね。,That sounds like a good idea now.,反応する,beginner,easy,sounds-like|smalltalk
+smalltalk,少し休憩しましょう。,Let us take a short break slowly.,提案する,intermediate,easy,let-us|suggestion
+smalltalk,コーヒーはいかがですか。,Would you like a cup of coffee?,勧める,beginner,easy,would-like|offer
+smalltalk,今日は早く帰ります。,I am leaving early today one more time.,予定を伝える,beginner,normal,present-continuous|schedule
+smalltalk,また後で話しましょう。,Let us talk later after lunch.,後で話す提案,beginner,easy,let-us|time
+smalltalk,その話を聞けてよかったです。,I am glad to hear that this morning.,気持ちを伝える,beginner,normal,glad-to|smalltalk
+smalltalk,今日は時間があります。,I have time today again.,予定に余裕があると伝える,intermediate,easy,have|time
+smalltalk,少し手伝えます。,I can help a little clearly.,手伝えると伝える,beginner,easy,can|help
+smalltalk,後で確認します。,I will check it later today.,後で対応すると伝える,beginner,easy,will|time
+smalltalk,もう一度お願いします。,Could you please say that again?,聞き返す,beginner,easy,could|request
+smalltalk,ゆっくり話してください。,Please speak slowly now.,話す速さを頼む,beginner,easy,please|adverb
+smalltalk,少し考えさせてください。,Let me think for a moment slowly.,考える時間をもらう,intermediate,easy,let-me|request
+smalltalk,それで大丈夫です。,That works for me with me.,同意を伝える,intermediate,easy,works-for|agreement
+smalltalk,予定を変更できます。,I can change my schedule one more time.,予定変更を伝える,beginner,normal,can|schedule
+smalltalk,今は準備できています。,I am ready now after lunch.,準備完了を伝える,beginner,easy,be-verb|ready
+smalltalk,また連絡します。,I will contact you again this morning.,再連絡を伝える,beginner,normal,will|contact
