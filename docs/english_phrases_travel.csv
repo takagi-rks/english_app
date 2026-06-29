@@ -1,0 +1,101 @@
+scene,japanese,english,hint,level,pronunciation_difficulty,grammar_tags
+greeting,こんにちは。予約をしています。,"Hello, I have a reservation.",受付や店で最初に伝える表現,beginner,easy,greeting|reservation|present-simple
+greeting,すみません、少し手伝っていただけますか。,"Excuse me, could you help me for a moment?",丁寧に助けを求める表現,beginner,normal,request|could-you|travel-help
+greeting,英語があまり得意ではありません。,"I do not speak English very well.",会話の最初に自分の英語力を伝える表現,beginner,normal,self-disclosure|present-simple
+greeting,もう少しゆっくり話していただけますか。,"Could you speak a little more slowly?",聞き取れない時に使う丁寧な依頼,beginner,normal,request|could-you|adverbs
+greeting,もう一度言っていただけますか。,"Could you say that again?",聞き返す時の定番表現,beginner,easy,request|could-you|listening
+greeting,ありがとうございます。助かりました。,"Thank you, that was very helpful.",助けてもらった後に自然に言う表現,beginner,easy,thanks|past-simple
+greeting,ここは初めてです。,"This is my first time here.",初訪問であることを伝える表現,beginner,easy,present-simple|travel
+greeting,よい一日を。,"Have a nice day.",別れ際の自然な挨拶,beginner,easy,greeting|set-phrase
+self_introduction,私は日本から来ました。,"I am from Japan.",出身地を伝える基本表現,beginner,easy,self-introduction|be-verb
+self_introduction,観光で来ています。,"I am here for sightseeing.",旅行目的を簡潔に伝える表現,beginner,easy,purpose|present-continuous
+self_introduction,一週間滞在します。,"I will stay for one week.",滞在期間を伝える表現,beginner,easy,future|travel
+self_introduction,友人と一緒に旅行しています。,"I am traveling with my friend.",同行者を伝える表現,beginner,normal,present-continuous|with
+self_introduction,家族と一緒に来ました。,"I came here with my family.",家族旅行で使える表現,beginner,easy,past-simple|with
+self_introduction,仕事ではなく休暇で来ました。,"I am here on vacation, not for work.",旅行目的を補足して伝える表現,beginner,normal,contrast|vacation
+self_introduction,この街に二泊します。,"I will stay in this city for two nights.",宿泊日数を伝える表現,beginner,normal,future|duration
+self_introduction,おすすめの場所を探しています。,"I am looking for recommended places.",おすすめを聞く前置きに使える表現,beginner,normal,present-continuous|recommendations
+airport,チェックインはどこですか。,"Where is the check-in counter?",空港でカウンターを探す表現,beginner,easy,where|airport
+airport,この便にチェックインしたいです。,"I would like to check in for this flight.",搭乗手続きで使う丁寧な表現,beginner,normal,would-like|airport
+airport,パスポートはこちらです。,"Here is my passport.",書類を渡す時の表現,beginner,easy,documents|airport
+airport,預ける荷物が一つあります。,"I have one bag to check.",受託手荷物があることを伝える表現,beginner,normal,baggage|have
+airport,機内持ち込みの荷物だけです。,"I only have carry-on luggage.",預け荷物がない時に使う表現,beginner,normal,baggage|only
+airport,窓側の席をお願いできますか。,"Could I have a window seat?",座席希望を丁寧に伝える表現,beginner,normal,could-i|seat-request
+airport,通路側の席は空いていますか。,"Is an aisle seat available?",通路側席があるか尋ねる表現,beginner,normal,availability|airport
+airport,搭乗口はどこですか。,"Where is the boarding gate?",ゲートを探す時の表現,beginner,easy,where|airport
+airport,搭乗は何時に始まりますか。,"What time does boarding start?",搭乗開始時刻を尋ねる表現,beginner,normal,time|present-simple
+airport,この便は遅れていますか。,"Is this flight delayed?",遅延確認に使う表現,beginner,easy,flight|be-verb
+airport,乗り継ぎ便に間に合いますか。,"Will I make my connecting flight?",乗り継ぎに間に合うか確認する表現,intermediate,hard,future|connecting-flight
+airport,手荷物受取所はどこですか。,"Where is the baggage claim?",到着後に荷物受取所を探す表現,beginner,easy,where|baggage
+airport,荷物が出てきません。,"My luggage has not arrived.",荷物トラブルを伝える表現,intermediate,hard,present-perfect|baggage-problem
+airport,税関申告書の書き方を教えてください。,"Could you show me how to fill out this customs form?",税関書類について尋ねる表現,intermediate,hard,could-you|customs|how-to
+airport,空港から市内までどう行けばいいですか。,"How can I get from the airport to the city center?",空港から移動方法を聞く表現,beginner,normal,how-can-i|get-to
+directions,駅はどちらですか。,"Which way is the station?",駅への方向を尋ねる表現,beginner,easy,directions|which-way
+directions,ここから歩いて行けますか。,"Can I walk there from here?",徒歩で行けるか確認する表現,beginner,easy,can|directions
+directions,ここからどのくらいかかりますか。,"How long does it take from here?",所要時間を尋ねる表現,beginner,easy,how-long|directions
+directions,この住所まで行きたいです。,"I would like to go to this address.",住所を見せながら使える表現,beginner,easy,would-like|address
+directions,地図で示していただけますか。,"Could you show me on the map?",地図上で場所を教えてもらう表現,beginner,normal,could-you|map
+directions,右に曲がればいいですか。,"Should I turn right?",道順を確認する表現,beginner,easy,should|directions
+directions,次の角を左ですか。,"Do I turn left at the next corner?",曲がる場所を確認する表現,beginner,normal,present-simple|directions
+directions,このバスは空港に行きますか。,"Does this bus go to the airport?",バスの行き先を確認する表現,beginner,normal,present-simple|transportation
+directions,この電車は中央駅に止まりますか。,"Does this train stop at Central Station?",電車の停車駅を確認する表現,beginner,normal,present-simple|train
+directions,切符はどこで買えますか。,"Where can I buy a ticket?",切符売り場を尋ねる表現,beginner,easy,where-can|ticket
+directions,反対方向に乗ってしまいました。,"I got on in the wrong direction.",移動中の間違いを説明する表現,intermediate,hard,past-simple|transportation
+directions,タクシー乗り場はどこですか。,"Where is the taxi stand?",タクシー乗り場を探す表現,beginner,easy,where|taxi
+directions,この近くに地下鉄の駅はありますか。,"Is there a subway station nearby?",近くの地下鉄駅を尋ねる表現,beginner,normal,there-is|nearby
+directions,目的地まで一番簡単な行き方は何ですか。,"What is the easiest way to get there?",一番簡単な行き方を聞く表現,intermediate,hard,superlative|get-to
+hotel,チェックインをお願いします。,"I would like to check in.",ホテル到着時の基本表現,beginner,easy,would-like|hotel
+hotel,予約名は田中です。,"The reservation is under Tanaka.",予約名を伝える表現,beginner,normal,reservation|hotel
+hotel,今夜一泊の予約があります。,"I have a reservation for one night tonight.",宿泊予約内容を伝える表現,beginner,normal,reservation|duration
+hotel,早めにチェックインできますか。,"Can I check in early?",アーリーチェックインを尋ねる表現,beginner,normal,can|hotel-request
+hotel,荷物を預かっていただけますか。,"Could you keep my luggage?",荷物預かりを頼む表現,beginner,normal,could-you|luggage
+hotel,朝食は含まれていますか。,"Is breakfast included?",朝食込みか確認する表現,beginner,easy,be-verb|hotel
+hotel,Wi-Fiのパスワードを教えてください。,"Could you tell me the Wi-Fi password?",ホテルでWi-Fi情報を聞く表現,beginner,normal,could-you|wifi
+hotel,部屋のエアコンが動きません。,"The air conditioner in my room is not working.",設備不具合を伝える表現,intermediate,hard,present-continuous|hotel-problem
+hotel,別の部屋に変えていただけますか。,"Could you move me to another room?",部屋変更を丁寧に依頼する表現,intermediate,hard,could-you|hotel-request
+hotel,チェックアウトは何時ですか。,"What time is check-out?",チェックアウト時刻を尋ねる表現,beginner,easy,time|hotel
+hotel,タクシーを呼んでいただけますか。,"Could you call a taxi for me?",ホテルでタクシー手配を頼む表現,beginner,normal,could-you|taxi
+hotel,領収書をいただけますか。,"Could I have a receipt?",領収書を依頼する表現,beginner,easy,could-i|receipt
+hotel,部屋の鍵をなくしました。,"I lost my room key.",鍵をなくした時の表現,beginner,normal,past-simple|hotel-problem
+hotel,空港行きのシャトルはありますか。,"Is there a shuttle to the airport?",空港送迎の有無を尋ねる表現,beginner,normal,there-is|shuttle
+cafe,ホットコーヒーを一つください。,"Could I have a hot coffee?",カフェで注文する基本表現,beginner,easy,could-i|ordering
+cafe,アイスラテをお願いします。,"I would like an iced latte.",飲み物を丁寧に注文する表現,beginner,easy,would-like|ordering
+cafe,ここで飲みます。,"For here, please.",店内利用を伝える短い表現,beginner,easy,cafe|set-phrase
+cafe,持ち帰りでお願いします。,"To go, please.",持ち帰りを伝える短い表現,beginner,easy,cafe|set-phrase
+cafe,砂糖は入れないでください。,"No sugar, please.",好みを簡単に伝える表現,beginner,easy,preference|cafe
+cafe,ミルクを少し入れてください。,"Could you add a little milk?",飲み物の調整を頼む表現,beginner,normal,could-you|quantity
+cafe,おすすめの飲み物は何ですか。,"What drink do you recommend?",おすすめを尋ねる表現,beginner,normal,recommendation|question
+cafe,これはカフェイン抜きですか。,"Is this decaf?",カフェイン抜きか確認する表現,beginner,easy,be-verb|cafe
+cafe,この席は空いていますか。,"Is this seat taken?",席が空いているか尋ねる自然な表現,beginner,normal,seat|be-verb
+restaurant,二名です。,"A table for two, please.",レストラン入店時の定番表現,beginner,easy,restaurant|set-phrase
+restaurant,予約しています。,"I have a reservation.",予約があることを伝える表現,beginner,easy,reservation|present-simple
+restaurant,窓側の席はありますか。,"Do you have a table by the window?",席の希望を伝える表現,beginner,normal,do-you-have|restaurant
+restaurant,メニューをいただけますか。,"Could I have a menu?",メニューを頼む丁寧な表現,beginner,easy,could-i|restaurant
+restaurant,おすすめは何ですか。,"What do you recommend?",店員におすすめを聞く表現,beginner,easy,recommendation|question
+restaurant,ベジタリアン料理はありますか。,"Do you have any vegetarian dishes?",食事制限に合う料理を尋ねる表現,beginner,normal,do-you-have|food
+restaurant,ナッツは入っていますか。,"Does this contain nuts?",アレルギー確認に使う表現,beginner,normal,allergy|present-simple
+restaurant,辛さを控えめにできますか。,"Could you make it less spicy?",辛さ調整を頼む表現,intermediate,hard,could-you|food-preference
+restaurant,注文してもいいですか。,"Can we order now?",注文したい時に使う表現,beginner,easy,can|ordering
+restaurant,水をもう一杯いただけますか。,"Could I have another glass of water?",追加で水を頼む表現,beginner,normal,could-i|restaurant
+restaurant,お会計をお願いします。,"Could we have the check, please?",会計を頼む自然な表現,beginner,normal,could-we|payment
+restaurant,別々に支払えますか。,"Can we pay separately?",割り勘会計を尋ねる表現,beginner,normal,can|payment
+restaurant,これは注文したものと違います。,"This is not what I ordered.",注文違いを伝える表現,intermediate,hard,relative-clause|restaurant-problem
+shopping,これを見せていただけますか。,"Could you show me this?",商品を見せてもらう表現,beginner,easy,could-you|shopping
+shopping,これはいくらですか。,"How much is this?",値段を尋ねる基本表現,beginner,easy,how-much|shopping
+shopping,試着してもいいですか。,"Can I try this on?",服を試したい時の表現,beginner,normal,can|shopping
+shopping,別のサイズはありますか。,"Do you have another size?",サイズ違いを尋ねる表現,beginner,normal,do-you-have|shopping
+shopping,これの小さいサイズはありますか。,"Do you have this in a smaller size?",より小さいサイズを探す表現,beginner,normal,comparative|shopping
+shopping,これの別の色はありますか。,"Do you have this in another color?",色違いを尋ねる表現,beginner,normal,do-you-have|shopping
+shopping,少し考えます。,"I will think about it.",購入を保留する自然な表現,beginner,easy,future|shopping
+shopping,これをください。,"I will take this.",購入を決めた時の表現,beginner,easy,future|shopping
+shopping,クレジットカードは使えますか。,"Can I pay by credit card?",支払い方法を確認する表現,beginner,easy,can|payment
+shopping,袋をいただけますか。,"Could I have a bag?",袋を頼む表現,beginner,easy,could-i|shopping
+shopping,免税手続きはできますか。,"Can I get a tax-free form?",免税書類を依頼する表現,intermediate,hard,can|tax-free
+smalltalk,この近くでおすすめの場所はありますか。,"Are there any places you recommend nearby?",旅行先でおすすめを尋ねる表現,beginner,normal,recommendation|nearby
+smalltalk,この街で一番人気の料理は何ですか。,"What is the most popular local dish here?",地元料理について尋ねる表現,intermediate,hard,superlative|food
+smalltalk,今日は天気がいいですね。,"The weather is nice today.",軽い会話を始める表現,beginner,easy,smalltalk|weather
+smalltalk,ここにはよく来るんですか。,"Do you come here often?",相手との雑談に使える表現,beginner,normal,present-simple|smalltalk
+smalltalk,写真を撮っていただけますか。,"Could you take a picture of us?",旅行中に写真を頼む表現,beginner,normal,could-you|photo
+smalltalk,この辺りは夜も安全ですか。,"Is this area safe at night?",安全確認をする表現,beginner,normal,safety|be-verb
+smalltalk,このイベントは何時に始まりますか。,"What time does this event start?",イベント開始時刻を聞く表現,beginner,normal,time|event
+smalltalk,ここで写真を撮ってもいいですか。,"Can I take photos here?",撮影可否を確認する表現,beginner,easy,can|photo
