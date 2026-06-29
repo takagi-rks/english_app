@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import {
   getToeicDifficultyLabel,
   getToeicPartLabel,
   getToeicQuestionKey,
   isToeicChoiceKey,
+  isToeicDifficulty,
+  isToeicPart,
   parseToeicChoices,
   parseToeicTags,
   toeicChoicesToJson,
@@ -47,6 +49,19 @@ type ToeicQuestionsClientProps = {
   initialErrorMessage: string | null;
 };
 
+type CsvPreviewRow = {
+  rowNumber: number;
+  payload: ToeicQuestionPayload;
+  status: "ready" | "skip" | "error";
+  message: string;
+};
+
+type ImportResult = {
+  successCount: number;
+  skipCount: number;
+  errorCount: number;
+};
+
 const emptyForm: ToeicQuestionForm = {
   part: "part5",
   difficulty: "beginner",
@@ -83,7 +98,7 @@ function toForm(question: ToeicQuestion): ToeicQuestionForm {
     choices,
     correctChoice: question.correct_choice,
     explanation: question.explanation ?? "",
-    tagsInput: question.tags.join(","),
+    tagsInput: question.tags.join("|"),
   };
 }
 
@@ -105,6 +120,74 @@ function validateForm(form: ToeicQuestionForm): string | null {
   return null;
 }
 
+function getCsvImportErrorMessage(error: { message: string }): string {
+  if (error.message.toLowerCase().includes("row-level security")) {
+    return "CSVインポートに失敗しました: Supabaseの行レベルセキュリティ設定により登録できません。";
+  }
+
+  return `CSVインポートに失敗しました: ${error.message}`;
+}
+
+function parseCsv(text: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  const normalizedText = text.replace(/^\uFEFF/, "");
+
+  for (let index = 0; index < normalizedText.length; index += 1) {
+    const character = normalizedText[index];
+    const nextCharacter = normalizedText[index + 1];
+
+    if (character === '"' && inQuotes && nextCharacter === '"') {
+      current += '"';
+      index += 1;
+      continue;
+    }
+
+    if (character === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (character === "," && !inQuotes) {
+      row.push(current.trim());
+      current = "";
+      continue;
+    }
+
+    if ((character === "\n" || character === "\r") && !inQuotes) {
+      if (character === "\r" && nextCharacter === "\n") {
+        index += 1;
+      }
+
+      row.push(current.trim());
+
+      if (row.some((value) => value.length > 0)) {
+        rows.push(row);
+      }
+
+      row = [];
+      current = "";
+      continue;
+    }
+
+    current += character;
+  }
+
+  row.push(current.trim());
+
+  if (inQuotes) {
+    throw new Error("CSVの引用符が閉じられていません。");
+  }
+
+  if (row.some((value) => value.length > 0)) {
+    rows.push(row);
+  }
+
+  return rows;
+}
+
 export function ToeicQuestionsClient({
   initialQuestions,
   initialErrorMessage,
@@ -114,8 +197,12 @@ export function ToeicQuestionsClient({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [filterPart, setFilterPart] = useState<ToeicPart | "all">("all");
   const [filterDifficulty, setFilterDifficulty] = useState<ToeicDifficulty | "all">("all");
+  const [csvRows, setCsvRows] = useState<CsvPreviewRow[]>([]);
+  const [csvMessage, setCsvMessage] = useState<string | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [message, setMessage] = useState<string | null>(initialErrorMessage);
   const [isLoading, setIsLoading] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   const filteredQuestions = useMemo(
     () =>
@@ -165,6 +252,204 @@ export function ToeicQuestionsClient({
       explanation: form.explanation.trim() || null,
       tags: parseToeicTags(form.tagsInput),
     };
+  }
+
+  function buildCsvPreview(rows: string[][]): CsvPreviewRow[] {
+    const [headers, ...bodyRows] = rows;
+
+    if (!headers) {
+      throw new Error("CSVにヘッダー行がありません。");
+    }
+
+    const normalizedHeaders = headers.map((header) => header.trim());
+    const requiredHeaders = [
+      "part",
+      "difficulty",
+      "question_text",
+      "choice_a",
+      "choice_b",
+      "choice_c",
+      "choice_d",
+      "correct_choice",
+    ];
+    const missingHeaders = requiredHeaders.filter((header) => !normalizedHeaders.includes(header));
+
+    if (missingHeaders.length > 0) {
+      throw new Error(`CSVに必須列がありません: ${missingHeaders.join(", ")}`);
+    }
+
+    const headerIndex = new Map(normalizedHeaders.map((header, index) => [header, index]));
+    const existingKeys = new Set(questions.map((question) => getToeicQuestionKey(question)));
+    const csvKeys = new Set<string>();
+
+    return bodyRows.map((row, index): CsvPreviewRow => {
+      const getValue = (header: string): string => {
+        const columnIndex = headerIndex.get(header);
+        return columnIndex === undefined ? "" : row[columnIndex]?.trim() ?? "";
+      };
+      const rowNumber = index + 2;
+      const part = getValue("part");
+      const difficulty = getValue("difficulty") || "beginner";
+      const correctChoice = getValue("correct_choice").toUpperCase();
+      const payload: ToeicQuestionPayload = {
+        part: isToeicPart(part) ? part : "part5",
+        difficulty: isToeicDifficulty(difficulty) ? difficulty : "beginner",
+        question_text: getValue("question_text"),
+        choices: toeicChoicesToJson({
+          A: getValue("choice_a"),
+          B: getValue("choice_b"),
+          C: getValue("choice_c"),
+          D: getValue("choice_d"),
+        }),
+        correct_choice: isToeicChoiceKey(correctChoice) ? correctChoice : "A",
+        explanation: getValue("explanation") || null,
+        tags: parseToeicTags(getValue("tags")),
+      };
+
+      if (!part || !difficulty || !payload.question_text || !correctChoice) {
+        return {
+          rowNumber,
+          payload,
+          status: "error",
+          message: "必須項目が不足しています。",
+        };
+      }
+
+      if (!isToeicPart(part)) {
+        return {
+          rowNumber,
+          payload,
+          status: "error",
+          message: "partの値が不正です。",
+        };
+      }
+
+      if (!isToeicDifficulty(difficulty)) {
+        return {
+          rowNumber,
+          payload,
+          status: "error",
+          message: "difficultyの値が不正です。",
+        };
+      }
+
+      if (!isToeicChoiceKey(correctChoice)) {
+        return {
+          rowNumber,
+          payload,
+          status: "error",
+          message: "correct_choiceの値が不正です。",
+        };
+      }
+
+      const choices = parseToeicChoices(payload.choices);
+
+      if (!choices) {
+        return {
+          rowNumber,
+          payload,
+          status: "error",
+          message: "choice_a〜choice_dをすべて入力してください。",
+        };
+      }
+
+      const key = getToeicQuestionKey(payload);
+
+      if (existingKeys.has(key) || csvKeys.has(key)) {
+        csvKeys.add(key);
+        return {
+          rowNumber,
+          payload,
+          status: "skip",
+          message: "同じTOEIC問題が既に登録されています。",
+        };
+      }
+
+      csvKeys.add(key);
+      return {
+        rowNumber,
+        payload,
+        status: "ready",
+        message: "登録予定",
+      };
+    });
+  }
+
+  async function handleCsvFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    setImportResult(null);
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const rows = parseCsv(text);
+      const previewRows = buildCsvPreview(rows);
+      setCsvRows(previewRows);
+      setCsvMessage(`CSVを読み込みました。${previewRows.length}件をプレビューしています。`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "CSVの読み込みに失敗しました。";
+      setCsvRows([]);
+      setCsvMessage(errorMessage);
+    }
+  }
+
+  async function importCsvRows() {
+    const readyRows = csvRows.filter((row) => row.status === "ready");
+    const skipCount = csvRows.filter((row) => row.status === "skip").length;
+    const validationErrorCount = csvRows.filter((row) => row.status === "error").length;
+
+    if (readyRows.length === 0) {
+      setImportResult({
+        successCount: 0,
+        skipCount,
+        errorCount: validationErrorCount,
+      });
+      setCsvMessage("登録できる行がありません。");
+      return;
+    }
+
+    setIsImporting(true);
+    setCsvMessage(null);
+
+    try {
+      const supabase = createSupabaseClient();
+      const { data, error } = await supabase
+        .from("toeic_questions")
+        .insert(readyRows.map((row) => row.payload))
+        .select("id");
+
+      if (error) {
+        setImportResult({
+          successCount: 0,
+          skipCount,
+          errorCount: validationErrorCount + readyRows.length,
+        });
+        setCsvMessage(getCsvImportErrorMessage(error));
+        return;
+      }
+
+      const successCount = data.length;
+      setImportResult({
+        successCount,
+        skipCount,
+        errorCount: validationErrorCount + Math.max(0, readyRows.length - successCount),
+      });
+      setCsvRows([]);
+      await refreshQuestions("CSVインポートが完了しました。");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "不明なエラーです。";
+      setImportResult({
+        successCount: 0,
+        skipCount,
+        errorCount: validationErrorCount + readyRows.length,
+      });
+      setCsvMessage(`CSVインポートに失敗しました: ${errorMessage}`);
+    } finally {
+      setIsImporting(false);
+    }
   }
 
   async function submitQuestion() {
@@ -371,7 +656,7 @@ export function ToeicQuestionsClient({
             id="toeic-tags"
             value={form.tagsInput}
             onChange={(event) => setForm((current) => ({ ...current, tagsInput: event.target.value }))}
-            placeholder="grammar,email,vocabulary"
+            placeholder="grammar|email|vocabulary"
           />
         </div>
 
@@ -387,6 +672,88 @@ export function ToeicQuestionsClient({
         </div>
 
         {message ? <p className="metaText">{message}</p> : null}
+      </section>
+
+      <section className="panel" aria-label="TOEIC CSVインポート">
+        <h2 className="sectionTitle">CSVインポート</h2>
+        <div className="field">
+          <label htmlFor="toeic-csv-file">CSVファイル</label>
+          <input
+            className="input"
+            id="toeic-csv-file"
+            type="file"
+            accept=".csv,text/csv"
+            onChange={handleCsvFileChange}
+          />
+        </div>
+        <p className="metaText">
+          形式: part, question_text, choice_a, choice_b, choice_c, choice_d, correct_choice,
+          explanation, difficulty, tags（tagsは|区切り）
+        </p>
+        {csvMessage ? <p className="metaText">{csvMessage}</p> : null}
+        {importResult ? (
+          <p className="metaText">
+            成功: {importResult.successCount} / スキップ: {importResult.skipCount} / 失敗:{" "}
+            {importResult.errorCount}
+          </p>
+        ) : null}
+        {csvRows.length > 0 ? (
+          <>
+            <div className="buttonRow formGap">
+              <button
+                className="button buttonPrimaryAction"
+                type="button"
+                onClick={importCsvRows}
+                disabled={isImporting || csvRows.every((row) => row.status !== "ready")}
+              >
+                {isImporting ? "インポート中" : "インポート実行"}
+              </button>
+              <button
+                className="button buttonSecondary"
+                type="button"
+                onClick={() => {
+                  setCsvRows([]);
+                  setCsvMessage(null);
+                  setImportResult(null);
+                }}
+                disabled={isImporting}
+              >
+                クリア
+              </button>
+            </div>
+            <div className="tableWrap formGap">
+              <table className="historyTable">
+                <thead>
+                  <tr>
+                    <th>行</th>
+                    <th>状態</th>
+                    <th>Part</th>
+                    <th>難易度</th>
+                    <th>問題文</th>
+                    <th>正解</th>
+                    <th>タグ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {csvRows.slice(0, 50).map((row) => (
+                    <tr key={row.rowNumber}>
+                      <td>{row.rowNumber}</td>
+                      <td>{row.message}</td>
+                      <td>{getToeicPartLabel(row.payload.part)}</td>
+                      <td>{getToeicDifficultyLabel(row.payload.difficulty)}</td>
+                      <td>{row.payload.question_text}</td>
+                      <td>{row.payload.correct_choice}</td>
+                      <td>{row.payload.tags.join(", ")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {csvRows.length > 50 ? (
+              <p className="metaText">プレビューは先頭50件のみ表示しています。</p>
+            ) : null}
+          </>
+        ) : null}
       </section>
 
       <section className="panel" aria-label="TOEIC問題一覧">

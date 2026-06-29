@@ -101,15 +101,15 @@ export function toeicChoicesToJson(choices: ToeicChoices): Json {
 
 export function parseToeicTags(value: string): string[] {
   return value
-    .split(",")
+    .split(/[|,]/)
     .map((tag) => tag.trim())
     .filter((tag, index, tags) => tag.length > 0 && tags.indexOf(tag) === index);
 }
 
 export function getToeicQuestionKey(
-  question: Pick<ToeicQuestion, "part" | "question_text" | "difficulty">,
+  question: Pick<ToeicQuestion, "part" | "question_text" | "correct_choice">,
 ): string {
-  return [question.part, question.question_text.trim().toLowerCase(), question.difficulty].join("\u0000");
+  return [question.part, question.question_text.trim().toLowerCase(), question.correct_choice].join("\u0000");
 }
 
 export type ToeicStats = {

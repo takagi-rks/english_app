@@ -310,6 +310,48 @@ A 300-row starter CSV is available at `docs/sample-phrases.csv`.
 
 A 20-row original TOEIC starter CSV is available at `docs/toeic-sample-questions.csv`.
 
+`/toeic/questions` also supports UTF-8 CSV import for bulk TOEIC question registration.
+Sample CSV files are available at `docs/toeic_part5_100.csv` and `docs/toeic_part2_50.csv`.
+
+Required columns:
+
+```text
+part,question_text,choice_a,choice_b,choice_c,choice_d,correct_choice,difficulty
+```
+
+Optional columns:
+
+```text
+explanation,tags
+```
+
+Full header example:
+
+```csv
+part,question_text,choice_a,choice_b,choice_c,choice_d,correct_choice,explanation,difficulty,tags
+part5,"The report was submitted ------- yesterday.",recent,recently,recency,more recent,B,Recently is an adverb.,beginner,adverb|word-form
+```
+
+`part` accepts `part1` through `part7`; `difficulty` accepts `beginner`, `intermediate`, or `advanced`; `correct_choice` accepts `A`, `B`, `C`, or `D`. `tags` accepts multiple values separated by `|`.
+
+Import steps:
+
+1. Open `/toeic/questions`.
+2. Choose a UTF-8 CSV file in the CSV import area.
+3. Review the preview. Invalid rows and duplicates are skipped with Japanese reasons.
+4. Click the import button to insert valid rows.
+
+During import, `choice_a` through `choice_d` are converted into the `choices` jsonb value:
+
+```json
+{
+  "A": "choice_a",
+  "B": "choice_b",
+  "C": "choice_c",
+  "D": "choice_d"
+}
+```
+
 ## Conversation Scenario Seeds
 
 These scenarios are original fixed scripts. They do not use AI.
